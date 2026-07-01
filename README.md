@@ -108,6 +108,7 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 - **`.claude/skills/`** = 專業技能手冊（SOP） → 遇到**特定任務**時才翻出來用
 - **`.claude/commands/`** = 常用作業的快速鍵 → 你**主動喊一聲**才執行
 - **`.mcp.json`** = 外接設備 → 讓它能連上 GitLab 等**外部服務**
+- **`.claude/hooks/`** = 自動門 → 特定事件一發生就**自動執行**，不用人記得
 
 ### 資料夾結構
 
@@ -116,12 +117,14 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 ├── CLAUDE.md              ← 專案規則（每次自動讀）
 ├── .mcp.json             ← 外部工具連接設定（由 .mcp.json.example 複製，見第九章）
 └── .claude/
-    ├── settings.json      ← 權限與偏好設定
+    ├── settings.json      ← 權限、偏好、Hook 設定
     ├── commands/          ← 自訂 /指令（見第七章）
     │   └── weekly-report.md
-    └── skills/            ← 技能包（見第六章）
-        └── weekly-report/
-            └── SKILL.md
+    ├── skills/            ← 技能包（見第六章）
+    │   └── weekly-report/
+    │       └── SKILL.md
+    └── hooks/             ← 自動化觸發腳本（見第十章）
+        └── log-markdown-edits.ps1
 ```
 
 ### 對照表
@@ -133,6 +136,7 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 | **Skill（技能）** | `.claude/skills/` | 某項特定任務的標準做法 | Claude 判斷**符合任務**時 | 第六章 |
 | **Command（指令）** | `.claude/commands/` | 常用任務的捷徑 | 你打 **`/名稱`** 主動觸發 | 第七章 |
 | **MCP** | `.mcp.json` | 連接外部服務（GitLab…） | 啟用連接器後 | 第九章 |
+| **Hook（自動觸發）** | `.claude/hooks/` + `settings.json` | 事件發生時要跑的動作 | 特定事件**自動**執行 | 第十章 |
 
 > 💡 `CLAUDE.md` 可以直接輸入 `/init` 讓 Claude 幫你產生。
 
@@ -251,9 +255,10 @@ description: 產生本週工作週報
 ├── .gitignore            ← 已設定好要忽略的檔案
 ├── .mcp.json.example     ← 外部工具連接範本（要用時複製成 .mcp.json）
 └── .claude/
-    ├── settings.json      ← 權限設定
+    ├── settings.json      ← 權限與 Hook 設定
     ├── commands/          ← 你的 /指令
-    └── skills/            ← 你的技能
+    ├── skills/            ← 你的技能
+    └── hooks/             ← 你的自動化腳本
 ```
 
 ---
@@ -321,7 +326,66 @@ claude mcp list        # 查看已設定的連接器
 
 ---
 
-## 十、使用小提醒
+## 十、進階：自動化觸發（Hooks）
+
+前面的技能、指令都要「Claude 決定用」或「你主動喊」才會動。**Hook 不一樣——
+只要某個事件發生，它就一定會自動執行**，是由 Claude Code 這個程式保證跑的，
+不依賴 Claude 或你記得。
+
+### 用比喻理解
+
+Hook 就像**自動門**：有人走近（事件發生）就自動打開（執行動作），不用有人去按。
+
+### 能做什麼（常見用途）
+
+| 觸發時機 | 典型用途 |
+|----------|----------|
+| 改完檔案後 | 自動跑格式化 / lint，程式碼隨時保持整潔 |
+| 執行指令前 | 攔截危險操作（例如偵測到 `rm -rf` 就擋下） |
+| 每次送出訊息時 | 自動附上專案資訊、目前分支等背景 |
+| 任務結束時 | 發通知提醒你「跑完了」 |
+
+### 本專案內含的範例
+
+本專案附了一個安全的示範：**每當 Claude 改完 `.md` 檔，就自動記一筆時間戳**。
+
+它由兩部分組成：
+
+**① 腳本** `.claude/hooks/log-markdown-edits.ps1`
+從事件資訊取出檔名，若是 `.md` 就把時間與檔名寫進 `.claude/edit-log.txt`。
+
+**② 在 `settings.json` 註冊**（告訴 Claude「什麼事件、跑哪個腳本」）
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_PROJECT_DIR}/.claude/hooks/log-markdown-edits.ps1\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+- **`PostToolUse`**：事件名稱，代表「工具執行完之後」。
+- **`matcher`**：要攔哪些工具，這裡是改檔用的 `Edit` 和 `Write`（大小寫要一致）。
+- **`command`**：實際要跑的指令。
+
+設定好後，試著請 Claude 改任何一個 `.md` 檔，`.claude/edit-log.txt` 就會自動多一行紀錄。
+（此範例只記錄、不影響任何操作，所以很安全。）
+
+> 💡 這個範例腳本是 **PowerShell（Windows）** 寫的。Mac / Linux 團隊可改寫成
+> `.sh` 腳本，或把 `command` 換成對應的指令。
+
+---
+
+## 十一、使用小提醒
 
 - 🔍 **會犯錯**：重要的修改記得自己再檢查一次。
 - 🔒 **注意權限**：Claude 執行指令前會詢問，看清楚再同意。

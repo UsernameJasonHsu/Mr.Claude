@@ -4,6 +4,9 @@
 # 技能自動產生的成果（範例，視需求決定是否保留）
 reports/
 
+# Hook 自動產生的紀錄
+.claude/edit-log.txt
+
 # 機密資訊：token、密碼等（放環境變數，絕不進版控）
 .env
 .env.local
