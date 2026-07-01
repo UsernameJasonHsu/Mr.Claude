@@ -354,6 +354,10 @@ Hook 就像**自動門**：有人走近（事件發生）就自動打開（執�
 **① 腳本** `.claude/hooks/log-markdown-edits.ps1`
 從事件資訊取出檔名，若是 `.md` 就把時間與檔名寫進 `.claude/edit-log.txt`。
 
+> ⚠️ **腳本註解刻意寫成英文**：`.ps1` 若存成「UTF-8 無 BOM」又含中文，
+> Windows PowerShell 5.1 會用 Big5 碼頁誤讀而導致整支腳本失效。寫成純英文
+> （ASCII）就能避開這個陷阱，在 PowerShell 5.1 與 7 都能正常執行。
+
 **② 在 `settings.json` 註冊**（告訴 Claude「什麼事件、跑哪個腳本」）
 ```json
 {
