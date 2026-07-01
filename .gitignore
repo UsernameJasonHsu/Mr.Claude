@@ -4,6 +4,10 @@
 # 技能自動產生的成果（範例，視需求決定是否保留）
 reports/
 
+# 機密資訊：token、密碼等（放環境變數，絕不進版控）
+.env
+.env.local
+
 # 作業系統雜物
 .DS_Store
 Thumbs.db

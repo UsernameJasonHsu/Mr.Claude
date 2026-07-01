@@ -246,7 +246,70 @@ description: 產生本週工作週報
 
 ---
 
-## 九、使用小提醒
+## 九、進階：連接外部工具（MCP）
+
+前面的技能與指令都是在「本機」做事。若想讓 Claude 直接**連上外部服務**——例如查
+GitLab 的 issue、開 Merge Request、讀資料庫——就要用 **MCP（外部工具連接器）**。
+
+### 用比喻理解
+
+MCP 就像幫 Claude「插上外接設備」：插上 GitLab，它就能操作 GitLab；插上資料庫，
+它就能查資料。你只要在設定檔裡告訴它「要連哪個服務、用什麼帳號」。
+
+### 設定方式
+
+本專案附了一份範本 `.mcp.json.example`，照三步驟即可啟用：
+
+**① 複製成正式設定檔**
+```bash
+cp .mcp.json.example .mcp.json
+```
+
+**② 設定檔長這樣**（金鑰用 `${變數}` 代入，不直接寫在檔案裡）
+```json
+{
+  "mcpServers": {
+    "gitlab": {
+      "type": "http",
+      "url": "https://gitlab-srcit.ieiworld.com/api/v4/mcp",
+      "headers": { "Authorization": "Bearer ${GITLAB_TOKEN}" }
+    }
+  }
+}
+```
+
+**③ 把 token 放進環境變數**（不要寫進設定檔）
+```bash
+# Windows PowerShell
+$env:GITLAB_TOKEN = "你的存取權杖"
+
+# Mac / Linux
+export GITLAB_TOKEN="你的存取權杖"
+```
+
+設定好後，在 Claude 對話中輸入 `/mcp` 就能看到、啟用這個連接器，接著就能說：
+
+```
+幫我看 GitLab 上指派給我的 issue，整理成清單
+```
+
+### 也可以用指令快速新增
+
+不想手動編輯 JSON，可用 CLI：
+```bash
+claude mcp add --scope project --transport http gitlab https://gitlab-srcit.ieiworld.com/api/v4/mcp
+claude mcp list        # 查看已設定的連接器
+```
+
+### ⚠️ 安全提醒
+
+- **金鑰絕不寫進設定檔或推上 Git**：一律用 `${變數}` 代入，實際值放環境變數。
+- 本專案的 `.gitignore` 已忽略 `.env`，請把 token 放這類檔案或系統環境變數。
+- `.mcp.json` 可以進版控（分享給團隊），但裡面只該有設定、沒有機密。
+
+---
+
+## 十、使用小提醒
 
 - 🔍 **會犯錯**：重要的修改記得自己再檢查一次。
 - 🔒 **注意權限**：Claude 執行指令前會詢問，看清楚再同意。

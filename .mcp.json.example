@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "gitlab": {
+      "type": "http",
+      "url": "https://gitlab-srcit.ieiworld.com/api/v4/mcp",
+      "headers": {
+        "Authorization": "Bearer ${GITLAB_TOKEN}"
+      }
+    },
+    "filesystem-example": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${CLAUDE_PROJECT_DIR}"]
+    }
+  }
+}
