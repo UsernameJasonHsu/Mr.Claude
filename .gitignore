@@ -1,0 +1,9 @@
+# Claude 個人設定（每個人不同，不進版控）
+.claude/settings.local.json
+
+# 技能自動產生的成果（範例，視需求決定是否保留）
+reports/
+
+# 作業系統雜物
+.DS_Store
+Thumbs.db
