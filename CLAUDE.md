@@ -8,6 +8,12 @@
 本專案用於整理與說明 Claude Code 的使用方法，主要產出為 `README.md`
 與 `.claude/skills/` 中的範例技能。
 
+## 執行環境
+
+- 開發環境為 **Windows + PowerShell**。
+- 撰寫 `.ps1` 腳本時，註解一律用**英文（ASCII）**：
+  UTF-8 無 BOM 的檔案若含中文，PowerShell 5.1 會用 Big5 誤讀而失效。
+
 ## 撰寫慣例
 
 - 文件一律使用**繁體中文**。
@@ -18,11 +24,28 @@
 ## 資料夾說明
 
 - `README.md`：主要使用說明文件。
-- `.claude/skills/`：範例技能，示範如何把常做的任務寫成 SKILL。
 - `CLAUDE.md`：本檔案，專案規則說明。
+- `logs/`：示範用的假工作紀錄，供 `weekly-report` 技能讀取。
+- `reports/`：週報技能執行後自動產生的成果，不進版控。
+- `.mcp.json.example`：外部工具（MCP）連接設定範本，要用時複製成 `.mcp.json`。
+- `.claude/skills/`：範例技能，示範如何把常做的任務寫成 SKILL。
+- `.claude/commands/`：自訂斜線指令（`/名稱`）。
+- `.claude/hooks/`：事件自動觸發的腳本。
+- `.claude/settings.json`：權限白名單、偏好與 Hook 註冊設定。
 
 ## 注意事項
 
 - 修改文件前，先讀過現有內容，維持整體風格一致。
 - 新增範例時，同步在 `README.md` 對應章節補上說明。
 - 涉及外部連結時，使用官方網址（如 claude.ai、docs.claude.com）。
+
+## 完成任務前的檢查
+
+- 改完 `README.md` 後，確認章節編號、目錄、對照表都同步更新。
+- 新增範例時，確認範例可以「直接照著跑」，不留半成品。
+- 外部連結使用官方網址，並確認沒有失效。
+
+## 內容正確性
+
+- 說明 Claude Code 功能時，以官方文件（docs.claude.com）為準，不要憑記憶編造指令或參數。
+- 不確定的功能，先查證再寫，寧可標注「待確認」也不要寫錯。
