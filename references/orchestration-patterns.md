@@ -293,9 +293,9 @@ A persona whose job is to decide which other persona to call.
 - Pure routing layer with no domain value
 - Adds two paraphrasing hops → information loss + roughly 2× token cost
 - The user already knew they wanted a review; they could have called `/review` directly
-- Replicates the work that slash commands and intent mapping in `AGENTS.md` already do
+- Replicates the work that slash commands and intent mapping already do (upstream, this is documented in `AGENTS.md`; this project keeps that mapping in `CLAUDE.md` instead)
 
-**What to do instead:** add or refine slash commands. Document intent → command mapping in `AGENTS.md`.
+**What to do instead:** add or refine slash commands. Document intent → command mapping in your project's own agent-instructions file (`CLAUDE.md` here).
 
 ---
 
