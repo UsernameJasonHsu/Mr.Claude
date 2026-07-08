@@ -106,6 +106,7 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 
 - **`CLAUDE.md`** = 交接筆記／工作守則 → Claude **每次**開工都會先讀一遍
 - **`.claude/skills/`** = 專業技能手冊（SOP） → 遇到**特定任務**時才翻出來用
+- **`.claude/agents/`** = 專業外援（子代理人） → 交給他**獨立處理一個角色的工作**，完成後回報結果
 - **`.claude/commands/`** = 常用作業的快速鍵 → 你**主動喊一聲**才執行
 - **`.mcp.json`** = 外接設備 → 讓它能連上 GitLab 等**外部服務**
 - **`.claude/hooks/`** = 自動門 → 特定事件一發生就**自動執行**，不用人記得
@@ -116,6 +117,8 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 你的專案/
 ├── CLAUDE.md              ← 專案規則（每次自動讀）
 ├── .mcp.json             ← 外部工具連接設定（由 .mcp.json.example 複製，見第九章）
+├── docs/                  ← 補充文件（見第十一章）
+├── references/            ← 技能引用的檢查清單等參考資料（見第十一章）
 └── .claude/
     ├── settings.json      ← 權限、偏好、Hook 設定
     ├── commands/          ← 自訂 /指令（見第七章）
@@ -123,6 +126,7 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
     ├── skills/            ← 技能包（見第六章）
     │   └── weekly-report/
     │       └── SKILL.md
+    ├── agents/            ← 子代理人（見第十一章）
     └── hooks/             ← 自動化觸發腳本（見第十章）
         └── log-markdown-edits.ps1
 ```
@@ -137,6 +141,7 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 | **Command（指令）** | `.claude/commands/` | 常用任務的捷徑 | 你打 **`/名稱`** 主動觸發 | 第七章 |
 | **MCP** | `.mcp.json` | 連接外部服務（GitLab…） | 啟用連接器後 | 第九章 |
 | **Hook（自動觸發）** | `.claude/hooks/` + `settings.json` | 事件發生時要跑的動作 | 特定事件**自動**執行 | 第十章 |
+| **Agent（子代理人）** | `.claude/agents/` | 只做一件事的專業角色，獨立跑一段對話再回報 | 你指名呼叫，或指令幫你呼叫 | 第十一章 |
 
 > 💡 `CLAUDE.md` 可以直接輸入 `/init` 讓 Claude 幫你產生。
 
@@ -244,7 +249,7 @@ description: 產生本週工作週報
 
 1. **清掉範例資料**：把 `logs/` 裡的示範紀錄換成你自己的內容。
 2. **改寫 `CLAUDE.md`**：換成你自己專案的規則與慣例。
-3. **保留或替換技能與指令**：`weekly-report` 可留著參考，或照它的格式改成你要的。
+3. **保留或替換技能、指令與子代理人**：`weekly-report` 可留著參考，第十一章的 `agent-skills` 範例也可整批保留或刪除，或照它們的格式改成你要的。
 4. **調整權限與外部工具**：視需要修改 `.claude/settings.json` 與 `.mcp.json.example`。
 
 範本可保留的結構如下，套到任何專案都適用：
@@ -254,10 +259,13 @@ description: 產生本週工作週報
 ├── CLAUDE.md              ← 改成你的專案規則
 ├── .gitignore            ← 已設定好要忽略的檔案
 ├── .mcp.json.example     ← 外部工具連接範本（要用時複製成 .mcp.json）
+├── docs/                  ← 補充文件（可留可刪，見第十一章）
+├── references/            ← 技能引用的參考資料（可留可刪，見第十一章）
 └── .claude/
     ├── settings.json      ← 權限與 Hook 設定
     ├── commands/          ← 你的 /指令
     ├── skills/            ← 你的技能
+    ├── agents/            ← 你的子代理人（見第十一章）
     └── hooks/             ← 你的自動化腳本
 ```
 
@@ -389,7 +397,91 @@ Hook 就像**自動門**：有人走近（事件發生）就自動打開（執�
 
 ---
 
-## 十一、使用小提醒
+## 十一、進階：子代理人（Agent）與外部技能包
+
+### 什麼是 Agent（子代理人）
+
+前面的 Skill 是「Claude 自己邊做邊翻的 SOP」，Agent 則更像**找一位專業外援**：
+把一件事整個交給他，他在自己獨立的對話裡處理完，只把**結論**回報給你，
+不會佔用主對話的內容。適合「需要專注單一角色觀點」的工作，例如程式碼審查、資安稽核。
+
+### 建立方式
+
+在 `.claude/agents/` 底下放一個 `.md` 檔，**檔名就是子代理人名稱**：
+
+```
+.claude/
+└── agents/
+    └── code-reviewer.md
+```
+
+檔案開頭一樣用 `---` 包住 `name`、`description`，下面寫這個角色的行為準則、
+輸出格式：
+
+```markdown
+---
+name: code-reviewer
+description: 資深程式碼審查員，從正確性、可讀性、架構、安全性與效能五個面向評估變更。
+---
+
+# Senior Code Reviewer
+
+你是一位資深工程師，負責審查程式碼異動……
+```
+
+之後可以直接跟 Claude 說「幫我用 code-reviewer 這個角色審查這次修改」，
+或讓 Claude 依 `description` 自行判斷該不該叫這個角色出來。
+
+### 本專案內含的範例：agent-skills 技能包
+
+本專案的 `.claude/agents/`、`.claude/skills/`、`.claude/commands/` 內，
+除了自製的 `weekly-report` 範例，還收錄了開源專案
+**[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)**
+提供的一整套「軟體開發生命週期」技能包，方便直接體驗 Agent／Skill／Command
+三者如何搭配運作。授權為 MIT License，原始授權條款存放於
+[`docs/agent-skills-LICENSE.txt`](docs/agent-skills-LICENSE.txt)。
+
+| 內容 | 數量 | 放在哪裡 |
+|------|------|----------|
+| Agent（子代理人／角色） | 4 個 | `.claude/agents/` |
+| Skill（技能） | 25 個 | `.claude/skills/` |
+| Command（指令） | 8 個 | `.claude/commands/` |
+| 參考資料（檢查清單等） | 7 份 | `references/` |
+| 補充文件 | 2 份 | `docs/` |
+
+**4 個角色（Agent）**：
+
+| 角色 | 定位 | 適合場景 |
+|------|------|----------|
+| `code-reviewer` | 資深工程師 | 合併前的完整程式碼審查 |
+| `security-auditor` | 資安工程師 | 弱點偵測、OWASP 風格稽核 |
+| `test-engineer` | QA 工程師 | 測試策略、涵蓋率分析 |
+| `web-performance-auditor` | 網頁效能工程師 | Core Web Vitals、載入效能稽核 |
+
+**8 個指令**，對應軟體開發從「定義」到「上線」的各階段：
+
+| 階段 | 指令 | 說明 |
+|------|------|------|
+| 定義需求 | `/spec` | 先寫規格再寫程式 |
+| 拆解任務 | `/plan` | 拆成小而可驗證的任務 |
+| 漸進實作 | `/build` | 一次做一個任務；加 `auto` 可一次跑完整份計畫 |
+| 驗證 | `/test` | TDD：先寫失敗測試，再實作 |
+| 審查 | `/review` | 五個面向的程式碼審查 |
+| 簡化 | `/code-simplify` | 在不改變行為下降低複雜度 |
+| 效能稽核 | `/webperf` | 網頁效能專項稽核 |
+| 上線前檢查 | `/ship` | 平行叫出多個角色會診，綜合成「可不可以上線」的結論 |
+
+25 個 Skill 涵蓋需求訪談、規格撰寫、除錯、CI/CD、安全性強化、文件撰寫等情境，
+會依你當下在做的事自動判斷要不要套用；不確定該用哪個時，可以先看
+`.claude/skills/using-agent-skills/SKILL.md`，這是統整其他 24 個技能的「總索引」。
+
+> 💡 **想拿掉這批範例**：直接刪除 `.claude/agents/`、`.claude/skills/` 裡對應的資料夾、
+> `.claude/commands/` 裡的 8 個 `.md`，以及 `docs/agent-skills-LICENSE.txt`、`docs/agents.md`、
+> `references/` 即可，彼此互不依賴 `weekly-report` 範例。
+
+---
+
+## 十二、使用小提醒
 
 - 🔍 **會犯錯**：重要的修改記得自己再檢查一次。
 - 🔒 **注意權限**：Claude 執行指令前會詢問，看清楚再同意。
