@@ -444,7 +444,7 @@ description: 資深程式碼審查員，從正確性、可讀性、架構、安�
 | 內容 | 數量 | 放在哪裡 |
 |------|------|----------|
 | Agent（子代理人／角色） | 4 個 | `.claude/agents/` |
-| Skill（技能） | 25 個 | `.claude/skills/` |
+| Skill（技能） | 24 個 | `.claude/skills/` |
 | Command（指令） | 8 個 | `.claude/commands/` |
 | 參考資料（檢查清單等） | 7 份 | `references/` |
 | 補充文件 | 2 份 | `docs/` |
@@ -471,13 +471,20 @@ description: 資深程式碼審查員，從正確性、可讀性、架構、安�
 | 效能稽核 | `/webperf` | 網頁效能專項稽核 |
 | 上線前檢查 | `/ship` | 平行叫出多個角色會診，綜合成「可不可以上線」的結論 |
 
-25 個 Skill 涵蓋需求訪談、規格撰寫、除錯、CI/CD、安全性強化、文件撰寫等情境，
+24 個 Skill 涵蓋需求訪談、規格撰寫、除錯、CI/CD、安全性強化、文件撰寫等情境，
 會依你當下在做的事自動判斷要不要套用；不確定該用哪個時，可以先看
-`.claude/skills/using-agent-skills/SKILL.md`，這是統整其他 24 個技能的「總索引」。
+`.claude/skills/using-agent-skills/SKILL.md`，這是統整其他 23 個技能的「總索引」。
 
 > 💡 **想拿掉這批範例**：直接刪除 `.claude/agents/`、`.claude/skills/` 裡對應的資料夾、
 > `.claude/commands/` 裡的 8 個 `.md`，以及 `docs/agent-skills-LICENSE.txt`、`docs/agents.md`、
 > `references/` 即可，彼此互不依賴 `weekly-report` 範例。
+>
+> 📌 **內容刻意保留英文**：這批檔案的內文（角色設定、技能步驟、指令說明）維持原文英文，
+> 方便日後對照上游 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) 更新、直接比對差異；
+> 只有 `description`（Claude 判斷何時套用的依據）翻成繁中，其餘不算違反本專案「文件一律繁中」的慣例。
+>
+> ⚠️ **`idea-refine` 技能需要 bash**：`.claude/skills/idea-refine/scripts/idea-refine.sh` 是
+> shell 腳本，在 Windows 上要透過 Git Bash 或 WSL 執行，PowerShell 無法直接跑。
 
 ---
 

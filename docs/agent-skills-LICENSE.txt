@@ -1,3 +1,7 @@
+Vendored from https://github.com/addyosmani/agent-skills at commit 70b7506ce90e200cb47645ddb3f6b8e84fecc047
+(2026-07-08). This is a point-in-time copy, not a tracked dependency — re-check upstream manually
+for fixes/updates rather than assuming this stays in sync.
+
 MIT License
 
 Copyright (c) 2025 Addy Osmani

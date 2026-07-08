@@ -120,7 +120,7 @@ This catalog is harness-agnostic, but most readers will run it on Claude Code. H
 
 ### Where personas live
 
-Plugin subagents go in `agents/` at the plugin root. This repo is a plugin (`.claude-plugin/plugin.json`), so `agents/code-reviewer.md`, `agents/security-auditor.md`, and `agents/test-engineer.md` are auto-discovered when the plugin is enabled. No path configuration needed.
+Project-level subagents go in `.claude/agents/`. In this project, `.claude/agents/code-reviewer.md`, `.claude/agents/security-auditor.md`, and `.claude/agents/test-engineer.md` are auto-discovered directly from that folder — no plugin manifest or path configuration needed. (Upstream, this same content is also distributed as a Claude Code plugin with `agents/` at the plugin root; here it's vendored as plain project files instead.)
 
 ### Subagents vs. Agent Teams
 
@@ -159,9 +159,9 @@ Before defining a custom subagent, check whether one of these covers the role:
 
 Don't redefine these. Layer your specialist personas (code-reviewer, security-auditor, test-engineer) on top of them.
 
-### Frontmatter restrictions for plugin agents
+### Frontmatter restrictions for plugin-distributed agents
 
-Plugin subagents do **not** support the `hooks`, `mcpServers`, or `permissionMode` frontmatter fields — these are silently ignored. If a future persona needs any of those, the user must copy the file into `.claude/agents/` or `~/.claude/agents/` instead.
+This note only applies if you distribute personas as a Claude Code **plugin** rather than vendoring them into `.claude/agents/` as this project does: plugin subagents do **not** support the `hooks`, `mcpServers`, or `permissionMode` frontmatter fields — these are silently ignored. If a persona needs any of those, copy the file into `.claude/agents/` (project-level) or `~/.claude/agents/` (user-level) instead, where these restrictions don't apply.
 
 The fields that DO work in plugin agents are: `name`, `description`, `tools`, `disallowedTools`, `model`, `maxTurns`, `skills`, `memory`, `background`, `effort`, `isolation`, `color`, `initialPrompt`. Use `model` per-persona if you want to optimize cost (e.g. Haiku for `test-engineer` coverage scans, Sonnet for `code-reviewer`, Opus for `security-auditor`).
 

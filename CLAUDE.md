@@ -28,10 +28,14 @@
 - `logs/`：示範用的假工作紀錄，供 `weekly-report` 技能讀取。
 - `reports/`：週報技能執行後自動產生的成果，不進版控。
 - `.mcp.json.example`：外部工具（MCP）連接設定範本，要用時複製成 `.mcp.json`。
-- `.claude/skills/`：範例技能，示範如何把常做的任務寫成 SKILL。
+- `.claude/skills/`：範例技能，示範如何把常做的任務寫成 SKILL；除了自製的 `weekly-report`，
+  也收錄了 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) 匯入的 24 個技能（見 README 第十一章）。
+- `.claude/agents/`：子代理人（Agent），來自同一份 `agent-skills` 匯入，共 4 個角色。
 - `.claude/commands/`：自訂斜線指令（`/名稱`）。
 - `.claude/hooks/`：事件自動觸發的腳本。
 - `.claude/settings.json`：權限白名單、偏好與 Hook 註冊設定。
+- `docs/`：補充文件，含 `agent-skills` 匯入的角色說明與授權條款。
+- `references/`：`.claude/agents/`、`.claude/skills/` 內容引用的檢查清單等參考資料。
 
 ## 注意事項
 
