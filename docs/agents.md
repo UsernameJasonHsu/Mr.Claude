@@ -114,9 +114,23 @@ Subagents only report results back to the main agent. Agent Teams let teammates 
 
 This restriction only matters if these personas are distributed as a Claude Code *plugin*: plugin agents do not support `hooks`, `mcpServers`, or `permissionMode` frontmatter — those fields are silently ignored. Vendored into `.claude/agents/` as they are in this project, that restriction doesn't apply, but avoid relying on those fields anyway if you want a persona to stay portable between the two distribution modes.
 
+## Vendored vs. installed as a plugin
+
+The upstream source, [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills), ships these same personas two ways. This project uses the first:
+
+| | Vendored (this project) | Installed as a plugin |
+|---|---|---|
+| Where files live | Fixed paths: `.claude/agents/`, `.claude/skills/`, `.claude/commands/` | Wherever `.claude-plugin/plugin.json` points — e.g. `agents/`, `skills/` at the plugin root |
+| Discovery | Claude Code's built-in project-level convention; no manifest involved | The plugin manifest tells Claude Code where to look |
+| Setup cost | None — clone the project, the files are already there | `/plugin marketplace add <repo>`, then `/plugin install agent-skills@<marketplace>` |
+| Naming | Plain names, e.g. `code-reviewer` | Namespaced, e.g. `agent-skills:code-reviewer`, to avoid collisions with other plugins or project-level definitions of the same name |
+| Staying current | A point-in-time snapshot, pinned to the commit recorded in [`../docs/agent-skills-LICENSE.txt`](agent-skills-LICENSE.txt); re-sync with upstream manually | Tracks the marketplace; reinstalling picks up upstream fixes automatically |
+
+Vendoring suits a project meant to be cloned and read as a working example, like this one — the persona files are visible and editable in place rather than living in a separate install. The plugin route suits reusing the same personas across many projects or users without copying files into each one.
+
 ## Adding a new persona
 
-1. Create `agents/<role>.md` with the same frontmatter format used by existing personas.
+1. Create `.claude/agents/<role>.md` with the same frontmatter format used by existing personas.
 2. Define the role, scope, output format, and rules.
 3. Add a **Composition** block at the bottom (Invoke directly when / Invoke via / Do not invoke from another persona).
 4. Add the persona to the table at the top of this file.
