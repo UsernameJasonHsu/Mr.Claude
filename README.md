@@ -438,8 +438,31 @@ description: 資深程式碼審查員，從正確性、可讀性、架構、安�
 除了自製的 `weekly-report` 範例，還收錄了開源專案
 **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)**
 提供的一整套「軟體開發生命週期」技能包，方便直接體驗 Agent／Skill／Command
-三者如何搭配運作。授權為 MIT License，原始授權條款存放於
-[`docs/agent-skills-LICENSE.txt`](docs/agent-skills-LICENSE.txt)。
+三者如何搭配運作。授權為 MIT License，原始授權條款與所複製的上游版本（commit SHA）
+存放於 [`docs/agent-skills-LICENSE.txt`](docs/agent-skills-LICENSE.txt)。
+
+### 為什麼是「複製」進來，不是「安裝」Plugin
+
+`addyosmani/agent-skills` 原本是以 **Claude Code Plugin** 的形式發布——Plugin
+是可以裝在使用者層級、跨專案共用的擴充套件，靠一份 `.claude-plugin/plugin.json`
+manifest 告訴 Claude Code「agent 放這裡、skill 放那裡」，資料夾不一定要在 `.claude/`
+底下，而且會用 `外掛名稱:資源名稱` 的命名空間避免撞名。
+
+但本專案的定位是「clone 下來就能直接照著跑的教學範本」，不希望還要另外叫使用者
+去裝一個外部 Plugin 才看得到範例，所以選擇把檔案**直接複製**進本專案固定的
+`.claude/agents/`、`.claude/skills/`、`.claude/commands/`——一般專案（非 Plugin）
+只有這幾個固定路徑會被 Claude Code 自動偵測，沒有 manifest 可以指定其他位置。
+
+| | 複製進專案（本專案的做法） | 安裝 Plugin |
+|---|---|---|
+| 檔案放哪 | 固定路徑：`.claude/agents/`、`.claude/skills/`、`.claude/commands/` | manifest 說了算，可以在 repo 任何位置 |
+| 使用門檻 | clone 下來就能用，不用額外安裝 | 要先 `/plugin marketplace add`、`/plugin install` |
+| 命名空間 | 沒有，直接用原本的名稱 | 有，例如 `agent-skills:code-reviewer`，避免撞名 |
+| 跟上游同步 | 不會自動同步，是某個時間點的快照 | 隨市集更新，重新 install 就跟上 |
+
+兩者互不衝突：你可以像現在這樣把範例複製進專案學習、直接改著玩；之後若想在
+**其他**專案也用同一套技能，改成 `/plugin install agent-skills@<市集>` 安裝會更省事，
+不用每個專案都複製一份。
 
 | 內容 | 數量 | 放在哪裡 |
 |------|------|----------|
