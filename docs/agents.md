@@ -94,7 +94,7 @@ Why this fails:
 - Pure routing layer with no domain value
 - Adds two paraphrasing hops → information loss + 2× token cost
 - The user already knows they want a review; let them call `/review` directly
-- Replicates work that slash commands and `AGENTS.md` intent-mapping already do
+- Replicates work that slash commands and intent-mapping already do (upstream, this is documented in `AGENTS.md`; this project keeps that mapping in `CLAUDE.md` instead)
 
 ## Rules for personas
 

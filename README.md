@@ -7,11 +7,26 @@ Claude Code 是一個在**終端機（命令列）**中運作的 AI 助理。
 
 ## 一、安裝與啟動
 
-```bash
-# 安裝（需要 Node.js）
-npm install -g @anthropic-ai/claude-code
+官方建議的安裝方式是「原生安裝」，之後會自動在背景更新，不用自己記得升級：
 
-# 在你的專案資料夾中啟動
+```bash
+# macOS / Linux / WSL
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+```powershell
+# Windows PowerShell
+irm https://claude.ai/install.ps1 | iex
+```
+
+> 💡 **已經有 Node.js 環境、習慣用 npm 管理工具的話**，也可以改用
+> `npm install -g @anthropic-ai/claude-code`（需要 Node.js 22 以上）。
+> 差別是：npm 安裝要自己跑 `npm install -g @anthropic-ai/claude-code@latest` 才會升級，
+> 原生安裝則會自動更新。兩種裝出來的是同一個程式，擇一即可。
+
+裝好後，在你的專案資料夾中啟動：
+
+```bash
 cd 你的專案資料夾
 claude
 ```
@@ -144,6 +159,33 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 | **Agent（子代理人）** | `.claude/agents/` | 只做一件事的專業角色，獨立跑一段對話再回報 | 你指名呼叫，或指令幫你呼叫 | 第十一章 |
 
 > 💡 `CLAUDE.md` 可以直接輸入 `/init` 讓 Claude 幫你產生。
+
+### CLAUDE.md 不只放在專案根目錄
+
+上面對照表寫的是最常用的位置，但 `CLAUDE.md` 其實分好幾層，**由外到內全部疊加生效**（不是後面蓋掉前面）：
+
+| 層級 | 放哪裡 | 適用範圍 | 進版控？ |
+|------|--------|----------|----------|
+| 個人（跨專案） | `~/.claude/CLAUDE.md` | 你自己所有專案通用的偏好 | 否，只在你電腦上 |
+| 專案（團隊共用） | 專案根目錄 `CLAUDE.md` | 這個專案所有人都要遵守的規則 | 是 |
+| 個人（限這個專案） | 專案根目錄 `CLAUDE.local.md` | 只有你、只有這個專案的偏好（例如你自己的測試帳密、常用捷徑） | 否，記得加進 `.gitignore` |
+
+三者會**一起**讀進去，不會互相取代；同一件事寫兩份還互相矛盾的話，Claude 可能隨機選一邊照做，所以盡量別讓內容打架。
+
+> 💡 專案很大、規則很多時，可以把特定主題的規則拆到 `.claude/rules/*.md`，
+> 並用檔頭 `paths:` 限定「只在改到符合條件的檔案時才載入」，比全部塞進一份 `CLAUDE.md` 更省對話空間。
+
+### settings.json 也有好幾層，會疊加生效
+
+`.claude/settings.json`（進版控、team 共用）之外，還有 `.claude/settings.local.json`（不進版控，只在你自己電腦生效，通常放個人化的權限或偏好）。兩者同時存在時，優先順序是：
+
+```
+命令列參數 > .claude/settings.local.json > .claude/settings.json > ~/.claude/settings.json（個人全域）
+```
+
+也就是「範圍愈小、愈個人化的設定，優先權愈高」。本專案的 `.gitignore` 已經把 `.claude/settings.local.json` 排除在外，就是為了讓每個人可以有自己的權限白名單，不會互相覆蓋、也不會不小心推上 Git。
+
+除了 `permissions` 和 `hooks`，`settings.json` 還能設定 `model`（預設模型）、`env`（環境變數）等，有需要時再視情況加入即可。
 
 ---
 
@@ -326,6 +368,25 @@ claude mcp add --scope project --transport http gitlab https://gitlab-srcit.ieiw
 claude mcp list        # 查看已設定的連接器
 ```
 
+### 兩種連接方式：http 與 stdio
+
+`.mcp.json.example` 裡其實放了兩組範例，對應 MCP 的兩種連接方式：
+
+- **`type: "http"`**：像上面的 `gitlab`，連到一個「已經架好、隨時在跑」的**遠端服務**。
+- **`type: "stdio"`**：像範本裡的 `filesystem-example`，Claude 自己在背景**啟動一個本機小程式**來當外接設備，用 `command` / `args` 指定要怎麼啟動它。
+
+```json
+{
+  "filesystem-example": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "${CLAUDE_PROJECT_DIR}"]
+  }
+}
+```
+
+這個 `filesystem-example` 本身用途不大——Claude Code 內建的讀寫檔工具已經能做同樣的事——放在範本裡純粹是示範 `stdio` 這種連接方式長什麼樣子。真的要用時，把它換成你要接的本機工具（例如某個資料庫的 MCP server）即可。
+
 ### ⚠️ 安全提醒
 
 - **金鑰絕不寫進設定檔或推上 Git**：一律用 `${變數}` 代入，實際值放環境變數。
@@ -395,6 +456,20 @@ Hook 就像**自動門**：有人走近（事件發生）就自動打開（執�
 > 💡 這個範例腳本是 **PowerShell（Windows）** 寫的。Mac / Linux 團隊可改寫成
 > `.sh` 腳本，或把 `command` 換成對應的指令。
 
+### 不是只有 PostToolUse
+
+`PostToolUse`（工具跑完之後）只是眾多事件之一，常用的還有：
+
+| 事件 | 觸發時機 | 適合做什麼 |
+|------|----------|------------|
+| `PreToolUse` | 工具**執行前** | 檢查參數、**擋下**危險操作（回傳「不允許」，該次操作就真的不會執行） |
+| `PostToolUse` | 工具執行**成功後** | 本專案範例：記錄、自動格式化 |
+| `UserPromptSubmit` | 你送出訊息、Claude 還沒開始處理前 | 自動附加背景資訊（例如目前分支） |
+| `SessionStart` / `SessionEnd` | 對話開始／結束時 | 初始化環境、寫入工作紀錄 |
+| `Stop` | Claude 這輪回覆完畢時 | 發通知提醒「跑完了」 |
+
+`PreToolUse` 跟本專案的範例（`PostToolUse`）差在：`PostToolUse` 只能事後補做點事，`PreToolUse` 可以**真的擋下**該次操作——例如公司規定不准用 `rm -rf`，就能寫一個 `PreToolUse` Hook 偵測到就回傳拒絕。設定方式跟本專案範例一樣，只是把 `"PostToolUse"` 換成對應的事件名稱。
+
 ---
 
 ## 十一、進階：子代理人（Agent）與外部技能包
@@ -431,6 +506,10 @@ description: 資深程式碼審查員，從正確性、可讀性、架構、安�
 
 之後可以直接跟 Claude 說「幫我用 code-reviewer 這個角色審查這次修改」，
 或讓 Claude 依 `description` 自行判斷該不該叫這個角色出來。
+
+> 💡 **不想手動寫檔案**：對 Claude 說 `/agents`，可以用互動介面建立、編輯、刪除子代理人，效果跟手動寫 `.md` 檔一樣，只是不用自己排版 YAML。
+>
+> 💡 **`name`、`description` 之外還有其他欄位**：例如 `model`（指定這個角色用哪個模型，例如簡單任務可以指定較便宜的模型）、`tools`（限制這個角色能用哪些工具，例如唯讀審查用的角色可以不給 `Edit`/`Write`）。不寫的話就沿用預設值，本專案的範例都沒特別指定。
 
 ### 本專案內含的範例：agent-skills 技能包
 
@@ -511,7 +590,57 @@ manifest 告訴 Claude Code「agent 放這裡、skill 放那裡」，資料夾�
 
 ---
 
-## 十二、使用小提醒
+## 十二、進階：Plan Mode、復原（Rewind）與自動記憶
+
+這三個是 Claude Code 內建、不用另外設定就能用的功能，跟前面「注意權限」「善用版本控制」的精神一致，建議養成習慣。
+
+### Plan Mode：先看計畫，再動手改
+
+按 `Shift+Tab` 可以切換模式，切到 **Plan Mode** 後，Claude 只會**讀程式、探索、提出做法**，不會真的改檔案或執行指令；等你看過計畫、覺得可行再核准，它才會真的動手。
+
+適合用在「範圍較大、有點風險、想先確認方向」的任務，例如：
+
+```
+（先按 Shift+Tab 切到 Plan Mode）
+把整個結帳流程改成支援多幣別
+```
+
+比起「先改下去、改壞了再復原」，Plan Mode 讓你在**動手前**就能喊停或調整方向。
+
+### 復原：改壞了怎麼辦
+
+除了「注意權限」「善用版本控制」，Claude Code 自己也有後悔藥：
+
+- **連按兩下 `Esc`**，或輸入 `/rewind`：把對話內容和程式碼改動，一起復原到之前的某個時間點。
+- 按一下 `Esc`：如果發現 Claude 正往錯的方向做，可以立刻打斷，不用等它做完。
+
+這個復原是 Claude Code 自己管理的檢查點，跟 `git` 是兩件事、可以搭配使用：手邊的改動用 `/rewind` 復原，已經 commit 的版本再靠 `git` 控管。
+
+### 自動記憶（Auto Memory）：Claude 自己會抄筆記
+
+`CLAUDE.md`（見第五章）是**你寫給 Claude 看**的規則；Auto Memory 則是 **Claude 自己觀察對話、寫給自己看**的筆記——例如你糾正過的做法、專案的建置指令、除錯時發現的眉角，下次對話會自動記得，不用你再交代一次。
+
+筆記存在 `~/.claude/projects/<專案>/memory/`，預設是開啟的。想看 Claude 記了什麼，輸入 `/memory` 即可瀏覽、編輯或刪除——內容都是純文字檔，看不順眼可以直接改。
+
+| | CLAUDE.md | Auto Memory |
+|---|---|---|
+| 誰寫的 | 你 | Claude |
+| 寫什麼 | 規則、慣例（本專案這份 `CLAUDE.md` 就是） | Claude 自己觀察到的做法、偏好 |
+| 進版控？ | 通常會（團隊共用） | 不會（存在你電腦，個人專屬） |
+
+### 其他值得知道的功能
+
+以下功能本專案沒有深入示範，但值得知道有這回事，需要時再查官方文件（[docs.claude.com](https://docs.claude.com)）：
+
+- **Output Styles**（`/config` 設定）：切換 Claude 回答的風格，例如偏教學導向的 Explanatory 風格。
+- **狀態列（`/statusline`）**：自訂終端機下方狀態列要顯示什麼資訊（目前分支、對話用量等）。
+- **IDE 擴充套件**：VS Code、JetBrains 都有 Claude Code 的擴充套件，不只能在終端機用。
+- **Headless 模式（`claude -p`）**：不進互動畫面、直接跑一次性任務，適合寫進自動化腳本。
+- **GitHub Actions**：讓 Claude Code 在 CI 流程裡自動跑（例如 PR 開啟時自動審查）。
+
+---
+
+## 十三、使用小提醒
 
 - 🔍 **會犯錯**：重要的修改記得自己再檢查一次。
 - 🔒 **注意權限**：Claude 執行指令前會詢問，看清楚再同意。
