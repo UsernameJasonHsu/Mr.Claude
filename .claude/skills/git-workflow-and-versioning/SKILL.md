@@ -3,21 +3,21 @@ name: git-workflow-and-versioning
 description: 建構 git 工作流程實務。適用於進行任何程式碼變更時。適用於 commit、建立分支、解決衝突，或需要組織多條並行工作流時。適用於發布版本、選擇語意化版本號（semantic version）升級方式、打標籤（tag），或撰寫變更紀錄（changelog）時。
 ---
 
-# Git Workflow and Versioning
+# Git 工作流程與版本管理
 
-## Overview
+## 概述
 
-Git is your safety net. Treat commits as save points, branches as sandboxes, and history as documentation. With AI agents generating code at high speed, disciplined version control is the mechanism that keeps changes manageable, reviewable, and reversible.
+Git 是你的安全網。把 commit 當成存檔點、把分支當成沙盒、把歷史當成文件。當 AI agent 以極快的速度產生程式碼時，有紀律的版本控制正是讓變更保持可控、可審查、可還原的機制。
 
-## When to Use
+## 適用時機
 
-Always. Every code change flows through git.
+永遠。每一項程式碼變更都會經過 git。
 
-## Core Principles
+## 核心原則
 
-### Trunk-Based Development (Recommended)
+### 主幹開發（建議做法）
 
-Keep `main` always deployable. Work in short-lived feature branches that merge back within 1-3 days. Long-lived development branches are hidden costs — they diverge, create merge conflicts, and delay integration. DORA research consistently shows trunk-based development correlates with high-performing engineering teams.
+讓 `main` 隨時都可部署。在短生命週期的功能分支上工作，並在 1-3 天內合併回去。長生命週期的開發分支是隱藏成本 —— 它們會分歧、製造合併衝突，並延後整合。DORA 的研究一再顯示，主幹開發與高績效的工程團隊高度相關。
 
 ```
 main ──●──●──●──●──●──●──●──●──●──  (always deployable)
@@ -25,15 +25,15 @@ main ──●──●──●──●──●──●──●──●─
          ●──●─╱    ●──╱    ← short-lived feature branches (1-3 days)
 ```
 
-This is the recommended default. Teams using gitflow or long-lived branches can adapt the principles (atomic commits, small changes, descriptive messages) to their branching model — the commit discipline matters more than the specific branching strategy.
+這是建議的預設做法。使用 gitflow 或長生命週期分支的團隊，可以把這些原則（原子化 commit、小變更、具描述性的訊息）套用到自己的分支模型上 —— commit 的紀律比特定的分支策略更重要。
 
-- **Dev branches are costs.** Every day a branch lives, it accumulates merge risk.
-- **Release branches are acceptable.** When you need to stabilize a release while main moves forward.
-- **Feature flags > long branches.** Prefer deploying incomplete work behind flags rather than keeping it on a branch for weeks.
+- **開發分支是成本。** 分支每多活一天，就多累積一分合併風險。
+- **發布分支是可接受的。** 當你需要在 main 繼續前進的同時穩定某個版本時。
+- **功能旗標 > 長分支。** 寧可把未完成的工作藏在旗標後面部署，也不要讓它在分支上擱好幾週。
 
-### 1. Commit Early, Commit Often
+### 1. 及早 commit，經常 commit
 
-Each successful increment gets its own commit. Don't accumulate large uncommitted changes.
+每一個成功的增量都有自己的 commit。不要累積大量未 commit 的變更。
 
 ```
 Work pattern:
@@ -43,11 +43,11 @@ Not this:
   Implement everything → Hope it works → Giant commit
 ```
 
-Commits are save points. If the next change breaks something, you can revert to the last known-good state instantly.
+commit 就是存檔點。若下一項變更弄壞了什麼，你可以立刻還原到上一個已知可用的狀態。
 
-### 2. Atomic Commits
+### 2. 原子化 commit
 
-Each commit does one logical thing:
+每個 commit 只做一件邏輯上的事：
 
 ```
 # Good: Each commit is self-contained
@@ -62,9 +62,9 @@ git log --oneline
 x1y2z3a Add task feature, fix sidebar, update deps, refactor utils
 ```
 
-### 3. Descriptive Messages
+### 3. 具描述性的訊息
 
-Commit messages explain the *why*, not just the *what*:
+commit 訊息要解釋*為什麼*，不只是*做了什麼*：
 
 ```
 # Good: Explains intent
@@ -78,24 +78,24 @@ consistent with existing validation patterns in auth.ts.
 update auth.ts
 ```
 
-**Format:**
+**格式：**
 ```
 <type>: <short description>
 
 <optional body explaining why, not what>
 ```
 
-**Types:**
-- `feat` — New feature
-- `fix` — Bug fix
-- `refactor` — Code change that neither fixes a bug nor adds a feature
-- `test` — Adding or updating tests
-- `docs` — Documentation only
-- `chore` — Tooling, dependencies, config
+**類型：**
+- `feat` —— 新功能
+- `fix` —— 修 bug
+- `refactor` —— 既不修 bug 也不加功能的程式碼變更
+- `test` —— 新增或更新測試
+- `docs` —— 只改文件
+- `chore` —— 工具、相依套件、設定
 
-### 4. Keep Concerns Separate
+### 4. 讓不同關注點分開
 
-Don't combine formatting changes with behavior changes. Don't combine refactors with features. Each type of change should be a separate commit — and ideally a separate PR:
+不要把格式調整跟行為變更混在一起。不要把重構跟功能混在一起。每一類變更都該是獨立的 commit —— 最好也是獨立的 PR：
 
 ```
 # Good: Separate concerns
@@ -106,11 +106,11 @@ git commit -m "feat: add phone number validation to registration"
 git commit -m "refactor validation and add phone number field"
 ```
 
-**Separate refactoring from feature work.** A refactoring change and a feature change are two different changes — submit them separately. This makes each change easier to review, revert, and understand in history. Small cleanups (renaming a variable) can be included in a feature commit at reviewer discretion.
+**把重構與功能開發分開。** 一次重構變更與一次功能變更是兩種不同的變更 —— 分開提交。這會讓每項變更更容易審查、更容易還原，也更容易在歷史中理解。小的整理（變數改名）可由審查者裁量是否併入功能 commit。
 
-### 5. Size Your Changes
+### 5. 控制變更大小
 
-Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See the splitting strategies in `code-review-and-quality` for how to break down large changes.
+每個 commit／PR 以約 100 行為目標。超過約 1000 行的變更應該拆開。大型變更的拆解策略見 `code-review-and-quality`。
 
 ```
 ~100 lines  → Easy to review, easy to revert
@@ -118,9 +118,9 @@ Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See t
 ~1000 lines → Split into smaller changes
 ```
 
-## Branching Strategy
+## 分支策略
 
-### Feature Branches
+### 功能分支
 
 ```
 main (always deployable)
@@ -130,12 +130,12 @@ main (always deployable)
   └── fix/duplicate-tasks      ← Bug fixes
 ```
 
-- Branch from `main` (or the team's default branch)
-- Keep branches short-lived (merge within 1-3 days) — long-lived branches are hidden costs
-- Delete branches after merge
-- Prefer feature flags over long-lived branches for incomplete features
+- 從 `main`（或團隊的預設分支）開分支
+- 讓分支保持短命（1-3 天內合併）—— 長生命週期的分支是隱藏成本
+- 合併後刪除分支
+- 未完成的功能，優先用功能旗標而不是長生命週期分支
 
-### Branch Naming
+### 分支命名
 
 ```
 feature/<short-description>   → feature/task-creation
@@ -144,9 +144,9 @@ chore/<short-description>     → chore/update-deps
 refactor/<short-description>  → refactor/auth-module
 ```
 
-## Working with Worktrees
+## 使用 worktree
 
-For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
+要讓多個 AI agent 平行作業，可以用 git worktree 同時跑多個分支：
 
 ```bash
 # Create a worktree for a feature branch
@@ -164,13 +164,13 @@ ls ../
 git worktree remove ../project-feature-a
 ```
 
-Benefits:
-- Multiple agents can work on different features simultaneously
-- No branch switching needed (each directory has its own branch)
-- If one experiment fails, delete the worktree — nothing is lost
-- Changes are isolated until explicitly merged
+好處：
+- 多個 agent 可以同時處理不同功能
+- 不需要切換分支（每個目錄都有自己的分支）
+- 若某個實驗失敗，刪掉那個 worktree 就好 —— 什麼都不會丟
+- 在明確合併之前，變更彼此隔離
 
-## The Save Point Pattern
+## 存檔點模式
 
 ```
 Agent starts work
@@ -186,11 +186,11 @@ Agent starts work
     └── Feature complete → All commits form a clean history
 ```
 
-This pattern means you never lose more than one increment of work. If an agent goes off the rails, `git reset --hard HEAD` takes you back to the last successful state.
+這個模式代表你損失的工作永遠不會超過一個增量。若 agent 跑偏了，`git reset --hard HEAD` 就能把你帶回上一個成功的狀態。
 
-## Change Summaries
+## 變更摘要
 
-After any modification, provide a structured summary. This makes review easier, documents scope discipline, and surfaces unintended changes:
+在任何修改之後，提供一份結構化的摘要。這會讓審查更容易、記錄你的範圍紀律，也能揭露非預期的變更：
 
 ```
 CHANGES MADE:
@@ -206,11 +206,11 @@ POTENTIAL CONCERNS:
 - Added zod as a dependency (72KB gzipped) — already in package.json
 ```
 
-This pattern catches wrong assumptions early and gives reviewers a clear map of the change. The "DIDN'T TOUCH" section is especially important — it shows you exercised scope discipline and didn't go on an unsolicited renovation.
+這個模式能及早抓出錯誤的假設，也給審查者一張清楚的變更地圖。「沒有動到的東西」那一段尤其重要 —— 它顯示你有守住範圍紀律，沒有跑去做沒人要求的翻修。
 
-## Pre-Commit Hygiene
+## Commit 前的衛生檢查
 
-Before every commit:
+每次 commit 之前：
 
 ```bash
 # 1. Check what you're about to commit
@@ -229,7 +229,7 @@ npm run lint
 npx tsc --noEmit
 ```
 
-Automate this with git hooks:
+用 git hook 把它自動化：
 
 ```json
 // package.json (using lint-staged + husky)
@@ -241,13 +241,13 @@ Automate this with git hooks:
 }
 ```
 
-## Handling Generated Files
+## 處理產生出來的檔案
 
-- **Commit generated files** only if the project expects them (e.g., `package-lock.json`, Prisma migrations)
-- **Don't commit** build output (`dist/`, `.next/`), environment files (`.env`), or IDE config (`.vscode/settings.json` unless shared)
-- **Have a `.gitignore`** that covers: `node_modules/`, `dist/`, `.env`, `.env.local`, `*.pem`
+- **只有在專案預期會有時，才 commit 產生出來的檔案**（例如 `package-lock.json`、Prisma 遷移檔）
+- **不要 commit** 建置輸出（`dist/`、`.next/`）、環境檔（`.env`），或 IDE 設定（除非是共用的，否則不要 commit `.vscode/settings.json`）
+- **要有 `.gitignore`**，涵蓋：`node_modules/`、`dist/`、`.env`、`.env.local`、`*.pem`
 
-## Using Git for Debugging
+## 用 Git 除錯
 
 ```bash
 # Find which commit introduced a bug
@@ -267,13 +267,13 @@ git blame src/services/task.ts
 git log --grep="validation" --oneline
 ```
 
-## Release & Versioning
+## 發布與版本管理
 
-Commits are how *you* track change; a **version** is how your *consumers* track it. The moment anything else depends on your code — another team, a published package, a deployed client — "latest on main" stops being a sufficient answer to "what am I running, and is it safe to upgrade?" A version number and a changelog are the contract that answers it.
+commit 是*你*用來追蹤變更的方式；而**版本**是你的*使用方*用來追蹤變更的方式。一旦有任何其他東西依賴你的程式碼 —— 另一個團隊、一個已發布的套件、一個已部署的用戶端 ——「main 上的最新版」就不再足以回答「我現在跑的是什麼、升級安全嗎？」。版本號與變更紀錄，就是回答這個問題的契約。
 
-### Semantic Versioning
+### 語意化版本
 
-For anything with consumers, version `MAJOR.MINOR.PATCH` and let the number carry meaning:
+任何有使用方的東西，都以 `MAJOR.MINOR.PATCH` 標示版本，並讓數字承載意義：
 
 ```
   MAJOR  breaking change — consumers must change their code to upgrade
@@ -281,22 +281,22 @@ For anything with consumers, version `MAJOR.MINOR.PATCH` and let the number carr
   PATCH  bug fix, backward-compatible — safe to upgrade
 ```
 
-The number is a promise, so make the code match it. A "patch" that changes behavior consumers relied on is a major change wearing a disguise (Hyrum's Law — see the `api-and-interface-design` skill). When unsure whether a change is breaking, assume it is; a surprise major is far cheaper than a broken consumer.
+這個數字是一項承諾，所以要讓程式碼與它相符。一個改變了使用方所依賴行為的「patch」，是偽裝過的重大變更（海勒姆定律 —— 見 `api-and-interface-design` 技能）。當你不確定某項變更是否具破壞性時，就假設它是；一次意外的 major，遠比一個被弄壞的使用方便宜得多。
 
-### Tag the release, and let the tag be the source of truth
+### 替發布打標籤，並讓標籤成為事實來源
 
-A release is an immutable point in history, not a moving branch. Tag it so it can always be reproduced:
+發布是歷史上一個不可變的點，不是一個會移動的分支。替它打標籤，讓它永遠能被重現：
 
 ```bash
 git tag -a v1.4.0 -m "Release 1.4.0"
 git push origin v1.4.0
 ```
 
-Derive the version from the tag rather than hand-editing it in scattered files, so the artifact, the tag, and the changelog can never disagree.
+從標籤推導出版本，而不是在散落各處的檔案裡手動編輯，這樣產出物、標籤與變更紀錄就永遠不會彼此矛盾。
 
-### Keep a changelog written for humans
+### 寫一份給人看的變更紀錄
 
-A changelog is not `git log`. It's the curated, consumer-facing answer to "what changed and do I care?" — grouped by `Added / Changed / Fixed / Deprecated / Removed / Security`, newest on top, every entry phrased around user impact, not internal mechanics.
+變更紀錄不是 `git log`。它是經過策劃、面向使用方的答案，回答「改了什麼、我需要在意嗎？」—— 依 `Added / Changed / Fixed / Deprecated / Removed / Security` 分組，最新的在最上面，每一條都圍繞著對使用者的影響來寫，而不是內部機制。
 
 ```markdown
 ## [1.4.0] - 2025-06-12
@@ -308,48 +308,48 @@ A changelog is not `git log`. It's the curated, consumer-facing answer to "what 
 - `GET /v1/tasks/all` — use the paginated `GET /v1/tasks` (removal in 2.0)
 ```
 
-Write the entry in the same change that makes the change, while the impact is fresh — not reconstructed from commit archaeology at release time. Breaking changes get a migration note and a deprecation window (follow the `deprecation-and-migration` skill); shipping the actual release is the `shipping-and-launch` skill's job — this section is the versioning contract that feeds it.
+在做出該變更的同一次變更中就寫下對應的條目，趁影響還鮮明時 —— 而不是在發布時靠 commit 考古重建出來。破壞性變更要附上遷移說明與淘汰緩衝期（依循 `deprecation-and-migration` 技能）；實際把版本推出去是 `shipping-and-launch` 技能的職責 —— 本節談的是餵養它的版本契約。
 
-## Common Rationalizations
+## 常見的自我合理化
 
-| Rationalization | Reality |
+| 自我合理化 | 現實 |
 |---|---|
-| "I'll commit when the feature is done" | One giant commit is impossible to review, debug, or revert. Commit each slice. |
-| "The message doesn't matter" | Messages are documentation. Future you (and future agents) will need to understand what changed and why. |
-| "I'll squash it all later" | Squashing destroys the development narrative. Prefer clean incremental commits from the start. |
-| "Branches add overhead" | Short-lived branches are free and prevent conflicting work from colliding. Long-lived branches are the problem — merge within 1-3 days. |
-| "I'll split this change later" | Large changes are harder to review, riskier to deploy, and harder to revert. Split before submitting, not after. |
-| "I don't need a .gitignore" | Until `.env` with production secrets gets committed. Set it up immediately. |
-| "It's just a small fix, bump the patch" | Check what consumers can observe. A behavior change they relied on is a major, whatever the diff size. |
-| "The changelog is just the commit log" | Commits are for you; the changelog is for consumers, curated by impact. Generating one from raw commits buries what matters. |
-| "We'll write the changelog at release time" | By then the impact is reconstructed from memory and half of it is missing. Write the entry with the change. |
+| 「等功能做完我再 commit」 | 一個巨大的 commit 無法審查、無法除錯、也無法還原。每個切片都 commit。 |
+| 「訊息不重要」 | 訊息就是文件。未來的你（與未來的 agent）需要理解改了什麼、為什麼改。 |
+| 「我之後再把它們 squash 起來」 | squash 會摧毀開發的敘事。從一開始就寫出乾淨的漸進 commit。 |
+| 「分支是額外開銷」 | 短命的分支是免費的，還能防止衝突的工作撞在一起。有問題的是長生命週期的分支 —— 1-3 天內合併掉。 |
+| 「這個變更我之後再拆」 | 大型變更更難審查、部署風險更高、也更難還原。提交前就拆，不是提交後。 |
+| 「我不需要 .gitignore」 | 直到含有正式環境機密的 `.env` 被 commit 進去為止。立刻把它設起來。 |
+| 「只是個小修正，patch 加一就好」 | 檢查使用方能觀察到什麼。他們所依賴的行為變了，就是 major，不管 diff 多小。 |
+| 「變更紀錄就是 commit log 啊」 | commit 是給你自己看的；變更紀錄是給使用方看的，並依影響策劃過。從原始 commit 自動產生，只會把重點埋掉。 |
+| 「變更紀錄等發布時再寫」 | 到那時候，影響只能憑記憶重建，而且會漏掉一半。跟著變更一起寫下條目。 |
 
-## Red Flags
+## 警訊
 
-- Large uncommitted changes accumulating
-- Commit messages like "fix", "update", "misc"
-- Formatting changes mixed with behavior changes
-- No `.gitignore` in the project
-- Committing `node_modules/`, `.env`, or build artifacts
-- Long-lived branches that diverge significantly from main
-- Force-pushing to shared branches
-- A breaking change shipped under a minor or patch version bump
-- A release with no tag, or a version number hand-edited out of sync with the tag
-- A user-facing release with no changelog entry, or a changelog that's just dumped commit messages
+- 大量未 commit 的變更不斷累積
+- commit 訊息像「fix」、「update」、「misc」
+- 格式調整跟行為變更混在一起
+- 專案裡沒有 `.gitignore`
+- 把 `node_modules/`、`.env` 或建置產物 commit 進去
+- 長生命週期的分支與 main 嚴重分歧
+- 對共用分支做 force push
+- 破壞性變更卻只升了 minor 或 patch 版號
+- 發布沒有打標籤，或版本號被手動編輯到與標籤不同步
+- 面向使用者的發布沒有變更紀錄條目，或變更紀錄只是把 commit 訊息倒進去
 
-## Verification
+## 驗證
 
-For every commit:
+每個 commit：
 
-- [ ] Commit does one logical thing
-- [ ] Message explains the why, follows type conventions
-- [ ] Tests pass before committing
-- [ ] No secrets in the diff
-- [ ] No formatting-only changes mixed with behavior changes
-- [ ] `.gitignore` covers standard exclusions
+- [ ] commit 只做一件邏輯上的事
+- [ ] 訊息解釋了為什麼，並遵循類型慣例
+- [ ] commit 前測試通過
+- [ ] diff 中沒有機密資料
+- [ ] 沒有把純格式變更跟行為變更混在一起
+- [ ] `.gitignore` 涵蓋了標準的排除項目
 
-For every release (anything with consumers):
+每次發布（任何有使用方的東西）：
 
-- [ ] The version bump matches the change: breaking → major, additive → minor, fix → patch
-- [ ] The release is tagged, and the version is derived from the tag, not hand-edited out of sync
-- [ ] The changelog has a curated, human-readable entry grouped by impact for this version
+- [ ] 版號的升級方式與變更相符：破壞性 → major、新增性 → minor、修正 → patch
+- [ ] 發布有打標籤，而且版本是從標籤推導出來的，沒有被手動編輯到不同步
+- [ ] 變更紀錄中，這個版本有一則經過策劃、依影響分組、人看得懂的條目

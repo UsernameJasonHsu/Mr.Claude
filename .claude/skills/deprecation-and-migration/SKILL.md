@@ -3,40 +3,40 @@ name: deprecation-and-migration
 description: 管理淘汰（deprecation）與遷移（migration）流程。適用於移除舊系統、API 或功能時。適用於將使用者從一種實作遷移至另一種時。適用於決定是否維護或淘汰既有程式碼時。
 ---
 
-# Deprecation and Migration
+# 淘汰與遷移
 
-## Overview
+## 概述
 
-Code is a liability, not an asset. Every line of code has ongoing maintenance cost — bugs to fix, dependencies to update, security patches to apply, and new engineers to onboard. Deprecation is the discipline of removing code that no longer earns its keep, and migration is the process of moving users safely from the old to the new.
+程式碼是負債，不是資產。每一行程式碼都有持續的維護成本 —— 要修的 bug、要更新的相依套件、要套用的安全修補，以及新進工程師的學習成本。淘汰是移除「已經不值得留」的程式碼的紀律，遷移則是安全地把使用者從舊的搬到新的的過程。
 
-Most engineering organizations are good at building things. Few are good at removing them. This skill addresses that gap.
+大多數工程組織很擅長把東西建出來。很少有組織擅長把東西移除掉。這個技能處理的就是這個缺口。
 
-## When to Use
+## 適用時機
 
-- Replacing an old system, API, or library with a new one
-- Sunsetting a feature that's no longer needed
-- Consolidating duplicate implementations
-- Removing dead code that nobody owns but everybody depends on
-- Planning the lifecycle of a new system (deprecation planning starts at design time)
-- Deciding whether to maintain a legacy system or invest in migration
+- 用新系統、API 或函式庫取代舊的
+- 收掉一個不再需要的功能
+- 整併重複的實作
+- 移除那種沒人維護、卻大家都在依賴的死碼
+- 規劃新系統的生命週期（淘汰規劃從設計階段就開始）
+- 決定要繼續維護一個老舊系統，還是投資在遷移上
 
-## Core Principles
+## 核心原則
 
-### Code Is a Liability
+### 程式碼是負債
 
-Every line of code has ongoing cost: it needs tests, documentation, security patches, dependency updates, and mental overhead for anyone working nearby. The value of code is the functionality it provides, not the code itself. When the same functionality can be provided with less code, less complexity, or better abstractions — the old code should go.
+每一行程式碼都有持續成本：它需要測試、文件、安全修補、相依更新，以及任何在附近工作的人所付出的心智負擔。程式碼的價值在於它提供的功能，而不是程式碼本身。當同樣的功能可以用更少的程式碼、更低的複雜度或更好的抽象來提供時 —— 舊的就該走。
 
-### Hyrum's Law Makes Removal Hard
+### 海勒姆定律（Hyrum's Law）讓移除變得困難
 
-With enough users, every observable behavior becomes depended on — including bugs, timing quirks, and undocumented side effects. This is why deprecation requires active migration, not just announcement. Users can't "just switch" when they depend on behaviors the replacement doesn't replicate.
+只要使用者夠多，每一個可被觀察到的行為都會有人依賴 —— 包括 bug、時序上的怪癖，以及沒寫在文件裡的副作用。這就是為什麼淘汰需要主動遷移，而不只是發個公告。當使用者依賴的行為在替代方案裡沒有被複製出來時，他們沒辦法「說換就換」。
 
-### Deprecation Planning Starts at Design Time
+### 淘汰規劃從設計階段就開始
 
-When building something new, ask: "How would we remove this in 3 years?" Systems designed with clean interfaces, feature flags, and minimal surface area are easier to deprecate than systems that leak implementation details everywhere.
+在建置新東西時就要問：「三年後我們要怎麼把它移除？」以乾淨介面、功能旗標與最小暴露面設計的系統，會比那種到處洩漏實作細節的系統更容易淘汰。
 
-## The Deprecation Decision
+## 淘汰的決策
 
-Before deprecating anything, answer these questions:
+在淘汰任何東西之前，先回答這些問題：
 
 ```
 1. Does this system still provide unique value?
@@ -55,26 +55,26 @@ Before deprecating anything, answer these questions:
    → Security risk, engineer time, opportunity cost of complexity.
 ```
 
-## Compulsory vs Advisory Deprecation
+## 強制淘汰 vs. 建議淘汰
 
-| Type | When to Use | Mechanism |
-|------|-------------|-----------|
-| **Advisory** | Migration is optional, old system is stable | Warnings, documentation, nudges. Users migrate on their own timeline. |
-| **Compulsory** | Old system has security issues, blocks progress, or maintenance cost is unsustainable | Hard deadline. Old system will be removed by date X. Provide migration tooling. |
+| 類型 | 適用時機 | 機制 |
+|------|----------|------|
+| **建議式（Advisory）** | 遷移是選擇性的，舊系統仍然穩定 | 警告、文件、輕推。使用者按自己的節奏遷移。 |
+| **強制式（Compulsory）** | 舊系統有安全問題、阻礙進展，或維護成本已無法承受 | 硬性期限。舊系統將在 X 日前移除。必須提供遷移工具。 |
 
-**Default to advisory.** Use compulsory only when the maintenance cost or risk justifies forcing migration. Compulsory deprecation requires providing migration tooling, documentation, and support — you can't just announce a deadline.
+**預設用建議式。** 只有當維護成本或風險足以正當化「強迫遷移」時，才用強制式。強制淘汰必須提供遷移工具、文件與支援 —— 你不能只是公告一個期限就了事。
 
-## The Migration Process
+## 遷移流程
 
-### Step 1: Build the Replacement
+### 步驟 1：先把替代方案做出來
 
-Don't deprecate without a working alternative. The replacement must:
+沒有能用的替代方案就不要淘汰。替代方案必須：
 
-- Cover all critical use cases of the old system
-- Have documentation and migration guides
-- Be proven in production (not just "theoretically better")
+- 涵蓋舊系統所有關鍵使用情境
+- 有文件與遷移指南
+- 已在正式環境中驗證過（不只是「理論上比較好」）
 
-### Step 2: Announce and Document
+### 步驟 2：公告與撰寫文件
 
 ```markdown
 ## Deprecation Notice: OldService
@@ -91,9 +91,9 @@ Don't deprecate without a working alternative. The replacement must:
 3. Run the migration verification script: `npx migrate-check`
 ```
 
-### Step 3: Migrate Incrementally
+### 步驟 3：漸進式遷移
 
-Migrate consumers one at a time, not all at once. For each consumer:
+一次遷移一個使用方，不要一次全部來。對每個使用方：
 
 ```
 1. Identify all touchpoints with the deprecated system
@@ -103,11 +103,11 @@ Migrate consumers one at a time, not all at once. For each consumer:
 5. Confirm no regressions
 ```
 
-**The Churn Rule:** If you own the infrastructure being deprecated, you are responsible for migrating your users — or providing backward-compatible updates that require no migration. Don't announce deprecation and leave users to figure it out.
+**流失原則（The Churn Rule）：** 如果被淘汰的基礎設施是你擁有的，那麼遷移使用者就是你的責任 —— 或者提供不需要遷移的向後相容更新。不要公告完淘汰，就把使用者丟在那裡自己想辦法。
 
-### Step 4: Remove the Old System
+### 步驟 4：移除舊系統
 
-Only after all consumers have migrated:
+只有在所有使用方都完成遷移之後：
 
 ```
 1. Verify zero active usage (metrics, logs, dependency analysis)
@@ -117,11 +117,11 @@ Only after all consumers have migrated:
 5. Celebrate — removing code is an achievement
 ```
 
-## Migration Patterns
+## 遷移模式
 
-### Strangler Pattern
+### 絞殺者模式（Strangler Pattern）
 
-Run old and new systems in parallel. Route traffic incrementally from old to new. When the old system handles 0% of traffic, remove it.
+讓新舊系統並行運作。把流量逐步從舊的導到新的。當舊系統承接 0% 流量時，就移除它。
 
 ```
 Phase 1: New system handles 0%, old handles 100%
@@ -131,9 +131,9 @@ Phase 4: New system handles 100%, old system idle
 Phase 5: Remove old system
 ```
 
-### Adapter Pattern
+### 轉接器模式（Adapter Pattern）
 
-Create an adapter that translates calls from the old interface to the new implementation. Consumers keep using the old interface while you migrate the backend.
+做一個轉接器，把舊介面的呼叫轉譯到新的實作。使用方繼續用舊介面，你則在後端進行遷移。
 
 ```typescript
 // Adapter: old interface, new implementation
@@ -148,9 +148,9 @@ class LegacyTaskService implements OldTaskAPI {
 }
 ```
 
-### Feature Flag Migration
+### 功能旗標遷移
 
-Use feature flags to switch consumers from old to new system one at a time:
+用功能旗標把使用方一個一個從舊系統切換到新系統：
 
 ```typescript
 function getTaskService(userId: string): TaskService {
@@ -161,46 +161,46 @@ function getTaskService(userId: string): TaskService {
 }
 ```
 
-## Zombie Code
+## 殭屍程式碼
 
-Zombie code is code that nobody owns but everybody depends on. It's not actively maintained, has no clear owner, and accumulates security vulnerabilities and compatibility issues. Signs:
+殭屍程式碼是指沒人擁有、卻大家都在依賴的程式碼。它沒有被積極維護、沒有明確的負責人，還會不斷累積安全漏洞與相容性問題。徵兆：
 
-- No commits in 6+ months but active consumers exist
-- No assigned maintainer or team
-- Failing tests that nobody fixes
-- Dependencies with known vulnerabilities that nobody updates
-- Documentation that references systems that no longer exist
+- 6 個月以上沒有 commit，卻仍有活躍的使用方
+- 沒有指定的維護者或團隊
+- 有失敗的測試但沒人修
+- 有已知漏洞的相依套件卻沒人更新
+- 文件中引用的系統早就不存在了
 
-**Response:** Either assign an owner and maintain it properly, or deprecate it with a concrete migration plan. Zombie code cannot stay in limbo — it either gets investment or removal.
+**該怎麼做：** 要嘛指派一位負責人並好好維護，要嘛帶著具體的遷移計畫把它淘汰。殭屍程式碼不能一直懸在那裡 —— 不是得到投入，就是被移除。
 
-## Common Rationalizations
+## 常見的自我合理化
 
-| Rationalization | Reality |
+| 自我合理化 | 現實 |
 |---|---|
-| "It still works, why remove it?" | Working code that nobody maintains accumulates security debt and complexity. Maintenance cost grows silently. |
-| "Someone might need it later" | If it's needed later, it can be rebuilt. Keeping unused code "just in case" costs more than rebuilding. |
-| "The migration is too expensive" | Compare migration cost to ongoing maintenance cost over 2-3 years. Migration is usually cheaper long-term. |
-| "We'll deprecate it after we finish the new system" | Deprecation planning starts at design time. By the time the new system is done, you'll have new priorities. Plan now. |
-| "Users will migrate on their own" | They won't. Provide tooling, documentation, and incentives — or do the migration yourself (the Churn Rule). |
-| "We can maintain both systems indefinitely" | Two systems doing the same thing is double the maintenance, testing, documentation, and onboarding cost. |
+| 「它還能跑啊，幹嘛移除？」 | 沒人維護但還能跑的程式碼，會不斷累積安全債與複雜度。維護成本會悄悄成長。 |
+| 「說不定以後有人會用到」 | 如果以後真的需要，再重建就好。為了「以防萬一」而留著沒人用的程式碼，成本比重建還高。 |
+| 「遷移太貴了」 | 拿遷移成本跟未來 2-3 年的持續維護成本比較。長期來看，遷移通常比較便宜。 |
+| 「等新系統做完再來淘汰它」 | 淘汰規劃從設計階段就開始。等新系統做完，你早就有新的優先事項了。現在就規劃。 |
+| 「使用者會自己遷移」 | 他們不會。提供工具、文件與誘因 —— 或者你自己做遷移（流失原則）。 |
+| 「兩套系統可以一直並存」 | 兩套系統做同一件事，等於維護、測試、文件與教育訓練成本全部加倍。 |
 
-## Red Flags
+## 警訊
 
-- Deprecated systems with no replacement available
-- Deprecation announcements with no migration tooling or documentation
-- "Soft" deprecation that's been advisory for years with no progress
-- Zombie code with no owner and active consumers
-- New features added to a deprecated system (invest in the replacement instead)
-- Deprecation without measuring current usage
-- Removing code without verifying zero active consumers
+- 被淘汰的系統沒有可用的替代方案
+- 淘汰公告沒有附上遷移工具或文件
+- 「軟性」淘汰以建議狀態掛了好幾年，毫無進展
+- 沒有負責人、卻有活躍使用方的殭屍程式碼
+- 在已被淘汰的系統上新增功能（該把心力投在替代方案上）
+- 沒有量測目前使用量就進行淘汰
+- 沒有確認已無活躍使用方就移除程式碼
 
-## Verification
+## 驗證
 
-After completing a deprecation:
+完成一次淘汰之後：
 
-- [ ] Replacement is production-proven and covers all critical use cases
-- [ ] Migration guide exists with concrete steps and examples
-- [ ] All active consumers have been migrated (verified by metrics/logs)
-- [ ] Old code, tests, documentation, and configuration are fully removed
-- [ ] No references to the deprecated system remain in the codebase
-- [ ] Deprecation notices are removed (they served their purpose)
+- [ ] 替代方案已在正式環境驗證過，並涵蓋所有關鍵使用情境
+- [ ] 有遷移指南，附具體步驟與範例
+- [ ] 所有活躍使用方都已完成遷移（以指標／日誌確認）
+- [ ] 舊程式碼、測試、文件與設定都已完全移除
+- [ ] 程式碼庫中不再有任何指向被淘汰系統的引用
+- [ ] 淘汰公告已移除（它們已經完成任務）

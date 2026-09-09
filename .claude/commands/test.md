@@ -1,19 +1,19 @@
 ---
-description: Run TDD workflow — write failing tests, implement, verify. For bugs, use the Prove-It pattern.
+description: 執行 TDD 流程 —— 先寫失敗的測試、再實作、然後驗證。修 bug 時使用 Prove-It 模式。
 ---
 
-Invoke the test-driven-development skill.
+呼叫 test-driven-development 技能。
 
-For new features:
-1. Write tests that describe the expected behavior (they should FAIL)
-2. Implement the code to make them pass
-3. Refactor while keeping tests green
+新功能的做法：
+1. 寫出描述預期行為的測試（此時應該要**失敗**）
+2. 實作程式碼讓測試通過
+3. 在測試維持綠燈的前提下重構
 
-For bug fixes (Prove-It pattern):
-1. Write a test that reproduces the bug (must FAIL)
-2. Confirm the test fails
-3. Implement the fix
-4. Confirm the test passes
-5. Run the full test suite for regressions
+修正 bug 的做法（Prove-It 模式）：
+1. 寫一個能重現該 bug 的測試（必須**失敗**）
+2. 確認測試確實失敗
+3. 實作修正
+4. 確認測試通過
+5. 執行完整測試套件，檢查有沒有造成回歸
 
-For browser-related issues, also invoke browser-testing-with-devtools to verify with Chrome DevTools MCP.
+若問題與瀏覽器有關，另外呼叫 browser-testing-with-devtools，用 Chrome DevTools MCP 驗證。

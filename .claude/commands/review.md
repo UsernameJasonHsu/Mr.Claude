@@ -1,16 +1,16 @@
 ---
-description: Conduct a five-axis code review — correctness, readability, architecture, security, performance
+description: 執行五個面向的程式碼審查 —— 正確性、可讀性、架構、安全性、效能
 ---
 
-Invoke the code-review-and-quality skill.
+呼叫 code-review-and-quality 技能。
 
-Review the current changes (staged or recent commits) across all five axes:
+從五個面向審查目前的變更（已暫存的檔案或近期的 commit）：
 
-1. **Correctness** — Does it match the spec? Edge cases handled? Tests adequate?
-2. **Readability** — Clear names? Straightforward logic? Well-organized?
-3. **Architecture** — Follows existing patterns? Clean boundaries? Right abstraction level?
-4. **Security** — Input validated? Secrets safe? Auth checked? (Use security-and-hardening skill)
-5. **Performance** — No N+1 queries? No unbounded ops? (Use performance-optimization skill)
+1. **正確性** —— 是否符合規格？邊界情境有處理嗎？測試足夠嗎？
+2. **可讀性** —— 命名清楚嗎？邏輯直白嗎？組織良好嗎？
+3. **架構** —— 是否遵循既有慣例？邊界乾淨嗎？抽象層級恰當嗎？
+4. **安全性** —— 輸入有驗證嗎？機密資料安全嗎？權限有檢查嗎？（使用 security-and-hardening 技能）
+5. **效能** —— 有 N+1 查詢嗎？有沒有無上限的操作？（使用 performance-optimization 技能）
 
-Categorize findings as Critical, Important, or Suggestion.
-Output a structured review with specific file:line references and fix recommendations.
+將發現的問題分為「嚴重（Critical）」、「重要（Important）」、「建議（Suggestion）」三級。
+輸出結構化的審查結果，標明具體的 file:line 位置與修正建議。

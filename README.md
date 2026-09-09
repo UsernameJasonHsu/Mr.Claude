@@ -581,9 +581,13 @@ manifest 告訴 Claude Code「agent 放這裡、skill 放那裡」，資料夾�
 > `.claude/commands/` 裡的 8 個 `.md`，以及 `docs/agent-skills-LICENSE.txt`、`docs/agents.md`、
 > `references/` 即可，彼此互不依賴 `weekly-report` 範例。
 >
-> 📌 **內容刻意保留英文**：這批檔案的內文（角色設定、技能步驟、指令說明）維持原文英文，
-> 方便日後對照上游 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) 更新、直接比對差異；
-> 只有 `description`（Claude 判斷何時套用的依據）翻成繁中，其餘不算違反本專案「文件一律繁中」的慣例。
+> 📌 **內容已全數譯為繁中**：這批檔案的內文（角色設定、技能步驟、指令說明）都已翻成繁體中文，
+> 符合本專案「文件一律繁中」的慣例。翻譯時刻意**不動**以下內容，以確保可正常運作：
+> YAML frontmatter 的 `name`、程式碼區塊與範本、指令與參數、檔案路徑、工具名稱（如 `Grep`、`Edit`）、
+> 技能名稱（如 `code-review-and-quality`）與外部連結。
+>
+> 若日後要對照上游 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) 的更新，
+> 由於內文已翻譯，無法直接 diff 比對，建議改以「章節標題與結構」對照，或另外保留一份英文原檔。
 >
 > ⚠️ **`idea-refine` 技能需要 bash**：`.claude/skills/idea-refine/scripts/idea-refine.sh` 是
 > shell 腳本，在 Windows 上要透過 Git Bash 或 WSL 執行，PowerShell 無法直接跑。
