@@ -34,6 +34,7 @@
 - `.claude/commands/`：自訂斜線指令（`/名稱`）。
 - `.claude/hooks/`：事件自動觸發的腳本。
 - `.claude/settings.json`：權限白名單、偏好與 Hook 註冊設定。
+- `plugins/`：Plugin 範例（`report-tools`，把 `weekly-report` 打包成 Plugin），用 `--plugin-dir` 載入，見 README 第十二章。
 - `docs/`：補充文件，含 `agent-skills` 匯入的角色說明與授權條款。
 - `references/`：`.claude/agents/`、`.claude/skills/` 內容引用的檢查清單等參考資料。
 

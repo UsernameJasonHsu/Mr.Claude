@@ -1,44 +1,45 @@
 ---
-description: Implement tasks incrementally — build, test, verify, commit. Add "auto" to run the whole plan in one approved pass.
+description: 漸進式實作任務 —— 建置、測試、驗證、commit。加上 "auto" 可在一次核准後跑完整份計畫。
 ---
 
-Invoke the incremental-implementation skill alongside test-driven-development.
+呼叫 incremental-implementation 技能，並搭配 test-driven-development。
 
-## Modes
+## 模式
 
-- **`/build`** — implement the *next* pending task, then stop (careful, one slice at a time).
-- **`/build auto`** — generate the plan if needed, get a single approval, then implement *every* task without stopping between them.
+- **`/build`** —— 實作*下一個*待辦任務，然後停下來（謹慎，一次一小塊）。
+- **`/build auto`** —— 必要時先產生計畫，取得單次核准後，中間不停地實作*每一個*任務。
 
-`$ARGUMENTS` selects the mode. Treat `auto` (canonical) or `all` as autonomous mode; anything else (or empty) is the default single-task mode. Note: autonomous mode is not faster *per task* — it runs the same test-driven loop — it only removes the human stepping *between* tasks.
+由 `$ARGUMENTS` 選擇模式。`auto`（標準寫法）或 `all` 視為自主模式；其他值（或空值）則是預設的單一任務模式。注意：自主模式*就單一任務而言*並沒有比較快 —— 它跑的是同一套測試驅動迴圈 —— 它只是省去任務*之間*的人工介入。
 
-## Default: one task
+## 預設：一次一個任務
 
-Pick the next pending task from the plan. Then:
+從計畫中挑出下一個待辦任務。然後：
 
-1. Read the task's acceptance criteria
-2. Load relevant context (existing code, patterns, types)
-3. Write a failing test for the expected behavior (RED)
-4. Implement the minimum code to pass the test (GREEN)
-5. Run the full test suite to check for regressions
-6. Run the build to verify compilation
-7. Commit with a descriptive message
-8. Mark the task complete and stop
+1. 閱讀該任務的驗收標準
+2. 載入相關情境（既有程式碼、慣例、型別）
+3. 為預期行為寫一個會失敗的測試（RED）
+4. 實作最少的程式碼讓測試通過（GREEN）
+5. 執行完整測試套件，檢查有沒有造成回歸
+6. 執行建置，確認可以編譯
+7. 用具描述性的訊息 commit
+8. 將任務標記為完成，然後停下來
 
-## Autonomous: the whole plan (`/build auto`)
+## 自主模式：跑完整份計畫（`/build auto`）
 
-Use this once a spec exists and you want to collapse plan + build into one run. It removes the manual stepping between tasks — **not** the verification. Every task still earns a passing test and its own commit.
+當規格已經存在，而你想把「規劃 + 建置」壓縮成一次執行時，就用這個模式。它省去的是任務之間的人工介入，**而不是**驗證。每個任務仍然要有一個通過的測試，以及屬於自己的 commit。
 
-1. **Require a spec.** Look only for a spec at a known path: `SPEC.md` at the repo root, `docs/SPEC.md`, or a file under `spec/`. A README or arbitrary doc does **not** count. If none exists, stop and tell the user to run `/spec` first — do not invent requirements.
-2. **Establish a clean baseline.** Run `git status --porcelain`. If there are uncommitted changes outside the expected planning artifacts (`SPEC.md`, `docs/SPEC.md`, `spec/*`, `tasks/plan.md`, `tasks/todo.md`), stop and ask the user to commit, stash, or confirm how to handle them. Autonomous per-task commits must not absorb unrelated local work, or the clean-rollback guarantee breaks.
-3. **Plan if needed.** If there is no `tasks/plan.md`, invoke planning-and-task-breakdown to generate one.
-4. **Single checkpoint.** Present the full plan and wait for an unambiguous affirmative (e.g. "approve", "go", "yes"). Treat hedged responses ("looks reasonable", "I guess") as **not** approved. This is the only human gate — after approval, run autonomously. If you generated `tasks/plan.md`, commit it as a single preparatory commit now so it doesn't bleed into the first task's commit.
-5. **Execute every task in dependency order.** Use each task's declared dependencies; if they aren't explicit, execute in the order the plan lists them. For each task, run the full default loop above (RED → GREEN → regression → build → commit → mark complete). Stage only the files that task touched plus its task-status update — never `git add -A` blindly — and make one commit per task so any point is a clean rollback.
-6. **Stop and ask the user** (do not push through) when:
-   - a test can't be made to pass or the build breaks without an obvious fix → follow debugging-and-error-recovery
-   - the spec is ambiguous, or a task needs a decision the spec doesn't cover
-   - a task is high-risk or irreversible — auth/permission changes, destructive data migrations, payments, deletions, deploys, anything touching secrets, **or anything you can't undo with `git revert`** → follow doubt-driven-development and get explicit sign-off before continuing
+1. **必須先有規格。** 只在已知路徑上找規格：專案根目錄的 `SPEC.md`、`docs/SPEC.md`，或 `spec/` 底下的檔案。README 或任意文件**不算**。若都不存在，就停下來請使用者先執行 `/spec` —— 不要自己編造需求。
+2. **建立乾淨的基準。** 執行 `git status --porcelain`。若在預期的規劃產物（`SPEC.md`、`docs/SPEC.md`、`spec/*`、`tasks/plan.md`、`tasks/todo.md`）之外還有未 commit 的變更，就停下來請使用者 commit、stash，或確認該怎麼處理。自主模式下的逐任務 commit 絕不能吸收進不相關的本機工作，否則「可乾淨回滾」的保證就會失效。
+3. **必要時先規劃。** 若沒有 `tasks/plan.md`，呼叫 planning-and-task-breakdown 產生一份。
+4. **單一檢查點。** 提出完整計畫，並等待明確的肯定答覆（例如「核准」、「開始」、「好」）。含糊的回應（「看起來還行」、「大概吧」）一律視為**未**核准。這是唯一的人工關卡 —— 核准之後就自主執行。若 `tasks/plan.md` 是你產生的，現在就把它獨立 commit 成一次前置準備的 commit，以免混進第一個任務的 commit 裡。
+5. **依相依順序執行每個任務。** 依照各任務宣告的相依關係；若沒有明確標示，就照計畫列出的順序執行。每個任務都跑一次上面完整的預設迴圈（RED → GREEN → 回歸測試 → 建置 → commit → 標記完成）。只暫存該任務動到的檔案，加上它的任務狀態更新 —— 絕不要盲目 `git add -A` —— 並且每個任務做一次 commit，讓任何一個時間點都能乾淨回滾。
+6. **遇到以下情況就停下來詢問使用者**（不要硬推下去）：
+   - 測試怎麼樣都無法通過，或建置壞掉而沒有明顯的修法 → 依循 debugging-and-error-recovery
+   - 規格有歧義，或某個任務需要做規格沒涵蓋到的決定
+   - 任務屬於高風險或不可逆 —— 權限／授權變更、破壞性的資料遷移、金流、刪除、部署、任何碰到機密資料的操作，**或任何無法用 `git revert` 復原的動作** → 依循 doubt-driven-development，取得明確簽核後再繼續
 
-   After the user resolves a blocker, they re-invoke `/build auto` — it resumes from the next pending task.
-7. **Summarize at the end:** tasks completed, tests added, commits made, and anything skipped, flagged, or left for the user.
+   使用者排除障礙之後，由他們重新執行 `/build auto` —— 它會從下一個待辦任務接續下去。
 
-If any step fails, follow the debugging-and-error-recovery skill.
+7. **最後做總結：** 完成了哪些任務、加了哪些測試、做了哪些 commit，以及有哪些被略過、被標記，或留給使用者處理。
+
+任何步驟失敗時，依循 debugging-and-error-recovery 技能。

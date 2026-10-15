@@ -3,38 +3,38 @@ name: planning-and-task-breakdown
 description: 將工作拆解為有順序的任務。適用於已有規格或明確需求，需要拆解為可實作的任務時。適用於任務感覺過大難以開始、需要評估範圍，或可平行作業時。
 ---
 
-# Planning and Task Breakdown
+# 規劃與任務拆解
 
-## Overview
+## 概述
 
-Decompose work into small, verifiable tasks with explicit acceptance criteria. Good task breakdown is the difference between an agent that completes work reliably and one that produces a tangled mess. Every task should be small enough to implement, test, and verify in a single focused session.
+把工作分解成小而可驗證的任務，並附上明確的驗收標準。良好的任務拆解，是「能穩定完成工作的 agent」與「產出一團亂的 agent」之間的差別。每個任務都應該小到能在一次專注的工作階段內完成實作、測試與驗證。
 
-## When to Use
+## 適用時機
 
-- You have a spec and need to break it into implementable units
-- A task feels too large or vague to start
-- Work needs to be parallelized across multiple agents or sessions
-- You need to communicate scope to a human
-- The implementation order isn't obvious
+- 你已有規格，需要拆成可實作的單元
+- 任務感覺太大或太模糊，不知從何下手
+- 工作需要平行分給多個 agent 或多次 session
+- 你需要向人說明範圍
+- 實作順序不明顯
 
-**When NOT to use:** Single-file changes with obvious scope, or when the spec already contains well-defined tasks.
+**不適用時機：** 範圍明確的單檔變更，或規格中已包含定義良好的任務。
 
-## The Planning Process
+## 規劃流程
 
-### Step 1: Enter Plan Mode
+### 步驟 1：進入 Plan Mode
 
-Before writing any code, operate in read-only mode:
+在寫任何程式碼之前，先以唯讀模式運作：
 
-- Read the spec and relevant codebase sections
-- Identify existing patterns and conventions
-- Map dependencies between components
-- Note risks and unknowns
+- 閱讀規格與相關的程式碼區段
+- 找出既有的慣例與寫法
+- 盤點元件之間的相依關係
+- 記下風險與未知數
 
-**Do NOT write code during planning.** The output is a plan document saved to `tasks/plan.md` and a task list saved to `tasks/todo.md`, not implementation.
+**規劃期間不要寫程式碼。** 產出是一份存到 `tasks/plan.md` 的計畫文件，以及一份存到 `tasks/todo.md` 的任務清單，而不是實作。
 
-### Step 2: Identify the Dependency Graph
+### 步驟 2：畫出相依關係圖
 
-Map what depends on what:
+盤點什麼相依於什麼：
 
 ```
 Database schema
@@ -52,13 +52,13 @@ Database schema
     └── Seed data / migrations
 ```
 
-Implementation order follows the dependency graph bottom-up: build foundations first.
+實作順序沿著相依關係圖由下而上：先把地基做好。
 
-### Step 3: Slice Vertically
+### 步驟 3：垂直切分
 
-Instead of building all the database, then all the API, then all the UI — build one complete feature path at a time:
+不要先做完所有資料庫、再做完所有 API、再做完所有 UI —— 一次完成一條完整的功能路徑：
 
-**Bad (horizontal slicing):**
+**不好（橫向切分）：**
 ```
 Task 1: Build entire database schema
 Task 2: Build all API endpoints
@@ -66,7 +66,7 @@ Task 3: Build all UI components
 Task 4: Connect everything
 ```
 
-**Good (vertical slicing):**
+**好（垂直切分）：**
 ```
 Task 1: User can create an account (schema + API + UI for registration)
 Task 2: User can log in (auth schema + API + UI for login)
@@ -74,11 +74,11 @@ Task 3: User can create a task (task schema + API + UI for creation)
 Task 4: User can view task list (query + API + UI for list view)
 ```
 
-Each vertical slice delivers working, testable functionality.
+每一個垂直切片都交付出可運作、可測試的功能。
 
-### Step 4: Write Tasks
+### 步驟 4：撰寫任務
 
-Each task follows this structure:
+每個任務都遵循這個結構：
 
 ```markdown
 ## Task [N]: [Short descriptive title]
@@ -103,16 +103,16 @@ Each task follows this structure:
 **Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files]
 ```
 
-### Step 5: Order and Checkpoint
+### 步驟 5：排序並設檢查點
 
-Arrange tasks so that:
+安排任務順序，讓它滿足：
 
-1. Dependencies are satisfied (build foundation first)
-2. Each task leaves the system in a working state
-3. Verification checkpoints occur after every 2-3 tasks
-4. High-risk tasks are early (fail fast)
+1. 相依關係都被滿足（先把地基做好）
+2. 每個任務結束時，系統都處於可運作的狀態
+3. 每 2-3 個任務之後就有一個驗證檢查點
+4. 高風險的任務排在前面（要失敗就早點失敗）
 
-Add explicit checkpoints:
+加上明確的檢查點：
 
 ```markdown
 ## Checkpoint: After Tasks 1-3
@@ -122,32 +122,32 @@ Add explicit checkpoints:
 - [ ] Review with human before proceeding
 ```
 
-## Task Sizing Guidelines
+## 任務大小準則
 
-| Size | Files | Scope | Example |
-|------|-------|-------|---------|
-| **XS** | 1 | Single function or config change | Add a validation rule |
-| **S** | 1-2 | One component or endpoint | Add a new API endpoint |
-| **M** | 3-5 | One feature slice | User registration flow |
-| **L** | 5-8 | Multi-component feature | Search with filtering and pagination |
-| **XL** | 8+ | **Too large — break it down further** | — |
+| 大小 | 檔案數 | 範圍 | 範例 |
+|------|--------|------|------|
+| **XS** | 1 | 單一函式或設定變更 | 加一條驗證規則 |
+| **S** | 1-2 | 一個元件或端點 | 新增一個 API 端點 |
+| **M** | 3-5 | 一個功能切片 | 使用者註冊流程 |
+| **L** | 5-8 | 跨多元件的功能 | 含篩選與分頁的搜尋 |
+| **XL** | 8+ | **太大了 —— 再往下拆** | — |
 
-If a task is L or larger, it should be broken into smaller tasks. An agent performs best on S and M tasks.
+若任務是 L 以上，就該拆成更小的任務。agent 在 S 與 M 大小的任務上表現最好。
 
-**When to break a task down further:**
-- It would take more than one focused session (roughly 2+ hours of agent work)
-- You cannot describe the acceptance criteria in 3 or fewer bullet points
-- It touches two or more independent subsystems (e.g., auth and billing)
-- You find yourself writing "and" in the task title (a sign it is two tasks)
+**什麼時候該再往下拆：**
+- 一次專注的工作階段做不完（大約需要 agent 工作 2 小時以上）
+- 你沒辦法用 3 個以內的項目符號描述驗收標準
+- 它動到兩個以上互相獨立的子系統（例如身分驗證與帳務）
+- 你發現自己在任務標題裡寫了「以及」（這是兩個任務的徵兆）
 
-## Output Files
+## 輸出檔案
 
-- **Plan document:** Save the implementation plan to `tasks/plan.md`.
-- **Task list:** Save the checklist-style task list to `tasks/todo.md`.
+- **計畫文件：** 把實作計畫存到 `tasks/plan.md`。
+- **任務清單：** 把檢核清單形式的任務清單存到 `tasks/todo.md`。
 
-Create the `tasks/` directory if it does not exist. These paths are the convention expected by the `/build` command and other downstream tooling.
+若 `tasks/` 目錄不存在就建立它。這些路徑是 `/build` 指令與其他下游工具預期的慣例。
 
-## Plan Document Template
+## 計畫文件範本
 
 ```markdown
 # Implementation Plan: [Feature/Project Name]
@@ -192,43 +192,43 @@ Create the `tasks/` directory if it does not exist. These paths are the conventi
 - [Question needing human input]
 ```
 
-## Parallelization Opportunities
+## 平行化的機會
 
-When multiple agents or sessions are available:
+當有多個 agent 或多個 session 可用時：
 
-- **Safe to parallelize:** Independent feature slices, tests for already-implemented features, documentation
-- **Must be sequential:** Database migrations, shared state changes, dependency chains
-- **Needs coordination:** Features that share an API contract (define the contract first, then parallelize)
+- **可安全平行：** 互相獨立的功能切片、替已實作功能補測試、文件撰寫
+- **必須依序進行：** 資料庫遷移、共用狀態的變更、相依鏈
+- **需要協調：** 共用同一份 API 契約的功能（先定好契約，再平行化）
 
-## Common Rationalizations
+## 常見的自我合理化
 
-| Rationalization | Reality |
+| 自我合理化 | 現實 |
 |---|---|
-| "I'll figure it out as I go" | That's how you end up with a tangled mess and rework. 10 minutes of planning saves hours. |
-| "The tasks are obvious" | Write them down anyway. Explicit tasks surface hidden dependencies and forgotten edge cases. |
-| "Planning is overhead" | Planning is the task. Implementation without a plan is just typing. |
-| "I can hold it all in my head" | Context windows are finite. Written plans survive session boundaries and compaction. |
+| 「我邊做邊想就好」 | 這正是你最後會得到一團亂與大量重做的原因。10 分鐘的規劃能省下好幾小時。 |
+| 「這些任務很明顯」 | 還是寫下來。明確列出的任務會暴露隱藏的相依關係與被遺忘的邊界情境。 |
+| 「規劃是額外開銷」 | 規劃就是任務本身。沒有計畫的實作只是在打字。 |
+| 「我全部都記得住」 | 情境視窗是有限的。寫下來的計畫能撐過 session 的邊界與情境壓縮。 |
 
-## Red Flags
+## 警訊
 
-- Starting implementation without a written task list
-- Tasks that say "implement the feature" without acceptance criteria
-- No verification steps in the plan
-- All tasks are XL-sized
-- No checkpoints between tasks
-- Dependency order isn't considered
+- 沒有書面任務清單就開始實作
+- 任務只寫「實作這個功能」，沒有驗收標準
+- 計畫中沒有驗證步驟
+- 所有任務都是 XL 大小
+- 任務之間沒有檢查點
+- 沒有考慮相依順序
 
-## Verification
+## 驗證
 
-Before starting implementation, confirm:
+開始實作之前，確認：
 
-- [ ] Every task has acceptance criteria
-- [ ] Every task has a verification step
-- [ ] Task dependencies are identified and ordered correctly
-- [ ] No task touches more than ~5 files
-- [ ] Checkpoints exist between major phases
-- [ ] The human has reviewed and approved the plan
+- [ ] 每個任務都有驗收標準
+- [ ] 每個任務都有驗證步驟
+- [ ] 任務相依關係都已辨識並正確排序
+- [ ] 沒有任務動到超過約 5 個檔案
+- [ ] 各主要階段之間都有檢查點
+- [ ] 人類已審閱並核准計畫
 
-## See Also
+## 延伸閱讀
 
-Acceptance criteria are per-task and answer "did we build the right thing?". They sit on top of the project-wide Definition of Done, the standing bar every task clears before it counts as done. See `references/definition-of-done.md`.
+驗收標準是逐任務的，回答的是「我們做的是對的東西嗎？」。它們架在專案層級的「完成的定義」之上 —— 那是每個任務都得先跨過、才算完成的固定門檻。見 `references/definition-of-done.md`。

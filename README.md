@@ -125,6 +125,7 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 - **`.claude/commands/`** = 常用作業的快速鍵 → 你**主動喊一聲**才執行
 - **`.mcp.json`** = 外接設備 → 讓它能連上 GitLab 等**外部服務**
 - **`.claude/hooks/`** = 自動門 → 特定事件一發生就**自動執行**，不用人記得
+- **Plugin** = 整理好的工具箱 → 把上面這些**打包成一包**，可以裝到別的專案、分給同事
 
 ### 資料夾結構
 
@@ -134,6 +135,8 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 ├── .mcp.json             ← 外部工具連接設定（由 .mcp.json.example 複製，見第九章）
 ├── docs/                  ← 補充文件（見第十一章）
 ├── references/            ← 技能引用的檢查清單等參考資料（見第十一章）
+├── plugins/               ← Plugin 範例（見第十二章）
+│   └── report-tools/
 └── .claude/
     ├── settings.json      ← 權限、偏好、Hook 設定
     ├── commands/          ← 自訂 /指令（見第七章）
@@ -157,6 +160,7 @@ Claude 會**自己讀檔案、改檔案、執行指令**，動作前通常會先
 | **MCP** | `.mcp.json` | 連接外部服務（GitLab…） | 啟用連接器後 | 第九章 |
 | **Hook（自動觸發）** | `.claude/hooks/` + `settings.json` | 事件發生時要跑的動作 | 特定事件**自動**執行 | 第十章 |
 | **Agent（子代理人）** | `.claude/agents/` | 只做一件事的專業角色，獨立跑一段對話再回報 | 你指名呼叫，或指令幫你呼叫 | 第十一章 |
+| **Plugin（外掛）** | 任意資料夾 + `.claude-plugin/plugin.json` | 把上面各種元件打包，可安裝、可分享 | 安裝後，或啟動時加 `--plugin-dir` | 第十二章 |
 
 > 💡 `CLAUDE.md` 可以直接輸入 `/init` 讓 Claude 幫你產生。
 
@@ -541,7 +545,7 @@ manifest 告訴 Claude Code「agent 放這裡、skill 放那裡」，資料夾�
 
 兩者互不衝突：你可以像現在這樣把範例複製進專案學習、直接改著玩；之後若想在
 **其他**專案也用同一套技能，改成 `/plugin install agent-skills@<市集>` 安裝會更省事，
-不用每個專案都複製一份。
+不用每個專案都複製一份。Plugin 的結構、安裝與自己動手做一個，詳見第十二章。
 
 | 內容 | 數量 | 放在哪裡 |
 |------|------|----------|
@@ -581,16 +585,189 @@ manifest 告訴 Claude Code「agent 放這裡、skill 放那裡」，資料夾�
 > `.claude/commands/` 裡的 8 個 `.md`，以及 `docs/agent-skills-LICENSE.txt`、`docs/agents.md`、
 > `references/` 即可，彼此互不依賴 `weekly-report` 範例。
 >
-> 📌 **內容刻意保留英文**：這批檔案的內文（角色設定、技能步驟、指令說明）維持原文英文，
-> 方便日後對照上游 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) 更新、直接比對差異；
-> 只有 `description`（Claude 判斷何時套用的依據）翻成繁中，其餘不算違反本專案「文件一律繁中」的慣例。
+> 📌 **內容已全數譯為繁中**：這批檔案的內文（角色設定、技能步驟、指令說明）都已翻成繁體中文，
+> 符合本專案「文件一律繁中」的慣例。翻譯時刻意**不動**以下內容，以確保可正常運作：
+> YAML frontmatter 的 `name`、程式碼區塊與範本、指令與參數、檔案路徑、工具名稱（如 `Grep`、`Edit`）、
+> 技能名稱（如 `code-review-and-quality`）與外部連結。
+>
+> 若日後要對照上游 [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) 的更新，
+> 由於內文已翻譯，無法直接 diff 比對，建議改以「章節標題與結構」對照，或另外保留一份英文原檔。
 >
 > ⚠️ **`idea-refine` 技能需要 bash**：`.claude/skills/idea-refine/scripts/idea-refine.sh` 是
 > shell 腳本，在 Windows 上要透過 Git Bash 或 WSL 執行，PowerShell 無法直接跑。
 
 ---
 
-## 十二、進階：Plan Mode、復原（Rewind）與自動記憶
+## 十二、進階：打包成 Plugin（外掛）
+
+前面幾章的 Skill、指令、Agent、Hook、MCP，都是「散裝」放在專案的 `.claude/` 裡，
+只對這個專案有效。**Plugin** 就是把它們**打包成一包**，可以一個指令安裝、跨專案共用、分享給同事。
+
+### 用比喻理解
+
+- **散裝放在 `.claude/`** = 自己辦公桌抽屜裡的工具 → 只有這張桌子能用
+- **Plugin** = 整理好的**工具箱** → 提到哪張桌子都能用，也能借給同事
+- **Marketplace（市集）** = **工具箱目錄** → 列出有哪些工具箱、去哪裡拿
+
+### 什麼時候需要 Plugin
+
+| 情境 | 建議做法 |
+|------|----------|
+| 只有這個專案要用 | 放 `.claude/` 就好，不需要 Plugin |
+| 只有自己用，但每個專案都要用 | 放使用者層級（例如 `~/.claude/skills/`）也可以 |
+| 要分給團隊、裝在很多專案、或要有版本號地發布 | 做成 Plugin |
+
+### Plugin 長什麼樣子
+
+一個 Plugin 就是一個資料夾，裡面一份**說明書**（`plugin.json`）加上各種元件，用不到的資料夾不用建：
+
+```
+report-tools/                 ← Plugin 根目錄
+├── .claude-plugin/
+│   └── plugin.json           ← 說明書（manifest），這個資料夾裡只放它
+├── skills/                   ← 技能，一個技能一個資料夾
+│   └── weekly-report/
+│       └── SKILL.md
+├── agents/                   ← 子代理人（選用）
+├── hooks/
+│   └── hooks.json            ← Hook 設定（選用）
+└── .mcp.json                 ← MCP 連接設定（選用）
+```
+
+> ⚠️ **最常見的錯誤**：把 `skills/` 放進 `.claude-plugin/` 裡面——這樣**不會載入**。
+> `.claude-plugin/` 只放 `plugin.json`，其他元件都放在 Plugin 根目錄。
+>
+> 💡 Plugin 裡也可以有 `commands/`，但那是舊格式，新做的 Plugin 建議都用 `skills/`。
+
+`plugin.json` 最少只要 `name`，常用欄位如下：
+
+```json
+{
+  "name": "report-tools",
+  "description": "週報產生技能的 Plugin 版範例（教學用）",
+  "version": "1.0.0",
+  "author": {
+    "name": "Ryan Hsu"
+  }
+}
+```
+
+| 欄位 | 必填 | 說明 |
+|------|------|------|
+| `name` | ✅ | Plugin 名稱，不能有空白；也會變成技能的**前綴** |
+| `description` | | 在 `/plugin` 畫面裡顯示的說明 |
+| `version` | | 版本號；有寫的話，使用者會停在這個版本，直到你改版號 |
+| `author` | | 作者，裡面的 `name` 必填 |
+
+**命名空間**：Plugin 裡的技能、子代理人都會自動加上 `Plugin 名稱:` 前綴。
+例如 `report-tools` 裡的 `weekly-report` 技能，要打 `/report-tools:weekly-report` 執行。
+這樣兩個 Plugin 都有叫 `weekly-report` 的技能也不會撞名。
+
+### 本專案內含的範例：`plugins/report-tools/`
+
+把第六章的 `weekly-report` 技能**原封不動**包成 Plugin，方便你比較「散裝」和「打包」差在哪：
+
+| | 散裝（第六章） | 打包成 Plugin（本章） |
+|---|---|---|
+| 檔案位置 | `.claude/skills/weekly-report/SKILL.md` | `plugins/report-tools/skills/weekly-report/SKILL.md` |
+| 說明書 | 不需要 | `plugins/report-tools/.claude-plugin/plugin.json` |
+| 怎麼執行 | `/weekly-report` | `/report-tools:weekly-report` |
+| 何時載入 | 在這個專案啟動就自動載入 | 要加 `--plugin-dir` 或安裝後才載入 |
+
+在專案根目錄照著跑：
+
+```bash
+# 1. 檢查格式是否正確（最後一行出現 ✔ Validation passed 就對了）
+claude plugin validate ./plugins/report-tools
+
+# 2. 帶著這個 Plugin 啟動（只對這次對話有效，不會真的安裝）
+claude --plugin-dir ./plugins/report-tools
+```
+
+進入對話後輸入：
+
+```
+/report-tools:weekly-report
+```
+
+就會跟 `/weekly-report` 一樣讀取 `logs/`、產生週報。
+
+> 💡 範例刻意放在 `plugins/`，**不放在 `.claude/` 底下**，所以平常啟動不會自動載入，
+> 只有加上 `--plugin-dir` 才會出現，不會跟原本的 `/weekly-report` 互相干擾。
+>
+> 💡 **對話中改了 Plugin 檔案**：輸入 `/reload-plugins` 重新載入，不用重開。
+
+### 安裝別人做的 Plugin
+
+在對話中輸入 `/plugin` 會打開管理畫面，有幾個分頁：
+
+| 分頁 | 用途 |
+|------|------|
+| **Discover** | 瀏覽已加入的市集裡有哪些 Plugin 可以裝 |
+| **Installed** | 已安裝的 Plugin：啟用、停用、更新、移除 |
+| **Marketplaces** | 管理已加入的市集 |
+| **Errors** | 載入失敗的 Plugin 和原因 |
+
+Anthropic 官方市集（`claude-plugins-official`）會在第一次啟動時自動加入，可以直接裝：
+
+```
+/plugin install commit-commands@claude-plugins-official
+```
+
+格式是 `Plugin 名稱@市集名稱`。在對話中執行後會打開該 Plugin 的介紹，讓你**先看它會裝哪些東西**、再選安裝範圍。
+要裝其他市集的 Plugin，先把市集加進來：
+
+```
+/plugin marketplace add 擁有者/repo名稱
+```
+
+**安裝範圍（scope）** 決定誰會用到這個 Plugin：
+
+| 範圍 | 誰會用到 | 記錄在哪個設定檔 |
+|------|----------|------------------|
+| 使用者（user） | 你自己，這台電腦上的**所有專案** | `~/.claude/settings.json` |
+| 專案（project） | 這個 repo 的**所有協作者** | `.claude/settings.json`（會進版控） |
+| 本機（local） | 你自己，**只限這個 repo** | `.claude/settings.local.json` |
+
+> 💡 選「專案」範圍時，設定檔只是「宣告要用這個 Plugin」，**不會**幫同事下載；
+> 每位同事還是要自己跑一次 `claude plugin install 名稱@市集 --scope project`。
+
+不進對話、直接在終端機管理也可以：
+
+```bash
+claude plugin list                       # 列出已安裝的 Plugin
+claude plugin disable 名稱@市集           # 暫時停用
+claude plugin enable 名稱@市集            # 重新啟用
+claude plugin uninstall 名稱@市集         # 移除
+claude plugin update 名稱@市集            # 更新到最新版
+```
+
+> 💡 **自動更新**：官方市集預設會自動更新；同事或第三方的市集預設**不會**，要手動更新，
+> 或在 `/plugin` 的 **Marketplaces** 分頁打開自動更新。
+
+### 進一步：做成市集分享給團隊
+
+想讓同事用 `/plugin install` 一鍵安裝，就要做一個市集：在 repo 裡放一份
+`.claude-plugin/marketplace.json` 列出有哪些 Plugin，推上 Git 後，同事用
+`/plugin marketplace add 擁有者/repo名稱` 加入即可。本專案定位是教學範本，**沒有**做成市集；
+需要時請參考官方的 [Create a marketplace](https://code.claude.com/docs/en/plugins/create-marketplace)。
+
+### ⚠️ 安全與成本提醒
+
+- **Plugin 以你的身分執行**：它的 Hook、MCP 伺服器都能在你的電腦上跑程式，只裝信得過的來源，裝之前先看介紹畫面列出的內容。
+- **啟用中的 Plugin 每次對話都會佔用額度**：每個技能、子代理人的名稱與說明，每一輪都會放進 Claude 的記憶裡。
+  用 `claude plugin details 名稱` 可以看它大約佔多少 token；用不到的就停用。
+- **小心「重複」**：如果你在使用者層級也安裝了 `agent-skills` Plugin，在本專案會同時看到
+  `code-reviewer`（第十一章複製進來的繁中版）和 `agent-skills:code-reviewer`（Plugin 的英文版）兩份。
+  兩者擇一即可，例如在本專案只想用繁中版，就到 `/plugin` 的 **Installed** 分頁停用該 Plugin。
+
+> 📚 官方文件：[Plugins overview](https://code.claude.com/docs/en/plugins)、
+> [Create a plugin](https://code.claude.com/docs/en/plugins/create)、
+> [Install and manage plugins](https://code.claude.com/docs/en/plugins/install)
+
+---
+
+## 十三、進階：Plan Mode、復原（Rewind）與自動記憶
 
 這三個是 Claude Code 內建、不用另外設定就能用的功能，跟前面「注意權限」「善用版本控制」的精神一致，建議養成習慣。
 
@@ -640,7 +817,7 @@ manifest 告訴 Claude Code「agent 放這裡、skill 放那裡」，資料夾�
 
 ---
 
-## 十三、使用小提醒
+## 十四、使用小提醒
 
 - 🔍 **會犯錯**：重要的修改記得自己再檢查一次。
 - 🔒 **注意權限**：Claude 執行指令前會詢問，看清楚再同意。

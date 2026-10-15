@@ -3,22 +3,22 @@ name: incremental-implementation
 description: 以漸進方式交付變更。適用於實作任何涉及一個以上檔案的功能或變更時。適用於即將一次寫大量程式碼，或任務感覺太大難以一步完成時。
 ---
 
-# Incremental Implementation
+# 漸進式實作
 
-## Overview
+## 概述
 
-Build in thin vertical slices — implement one piece, test it, verify it, then expand. Avoid implementing an entire feature in one pass. Each increment should leave the system in a working, testable state. This is the execution discipline that makes large features manageable.
+以薄的垂直切片來建置 —— 實作一小塊、測試它、驗證它，然後再往外擴。避免一次把整個功能實作完。每一個增量都應該讓系統維持在可運作、可測試的狀態。這是讓大型功能變得可控的執行紀律。
 
-## When to Use
+## 適用時機
 
-- Implementing any multi-file change
-- Building a new feature from a task breakdown
-- Refactoring existing code
-- Any time you're tempted to write more than ~100 lines before testing
+- 實作任何跨多檔案的變更
+- 依任務拆解結果建置新功能
+- 重構既有程式碼
+- 任何你想在測試之前寫超過約 100 行的時候
 
-**When NOT to use:** Single-file, single-function changes where the scope is already minimal.
+**不適用時機：** 範圍本來就極小的單檔、單函式變更。
 
-## The Increment Cycle
+## 增量循環
 
 ```
 ┌──────────────────────────────────────┐
@@ -33,19 +33,19 @@ Build in thin vertical slices — implement one piece, test it, verify it, then 
 └──────────────────────────────────────┘
 ```
 
-For each slice:
+每一個切片都：
 
-1. **Implement** the smallest complete piece of functionality
-2. **Test** — run the test suite (or write a test if none exists)
-3. **Verify** — confirm the slice works as expected (tests pass, build succeeds, manual check)
-4. **Commit** -- save your progress with a descriptive message (see `git-workflow-and-versioning` for atomic commit guidance)
-5. **Move to the next slice** — carry forward, don't restart
+1. **實作**最小的一塊完整功能
+2. **測試** —— 跑測試套件（若沒有測試就先寫一個）
+3. **驗證** —— 確認這個切片如預期運作（測試通過、建置成功、手動確認）
+4. **Commit** —— 用具描述性的訊息保存進度（原子化 commit 的指引見 `git-workflow-and-versioning`）
+5. **進到下一個切片** —— 往前推進，不要從頭重來
 
-## Slicing Strategies
+## 切分策略
 
-### Vertical Slices (Preferred)
+### 垂直切片（首選）
 
-Build one complete path through the stack:
+建置一條完整貫穿整個堆疊的路徑：
 
 ```
 Slice 1: Create a task (DB + API + basic UI)
@@ -61,11 +61,11 @@ Slice 4: Delete a task (delete + API + UI + confirmation)
     → Tests pass, full CRUD complete
 ```
 
-Each slice delivers working end-to-end functionality.
+每個切片都交付出可端到端運作的功能。
 
-### Contract-First Slicing
+### 契約優先切分
 
-When backend and frontend need to develop in parallel:
+當後端與前端需要平行開發時：
 
 ```
 Slice 0: Define the API contract (types, interfaces, OpenAPI spec)
@@ -74,9 +74,9 @@ Slice 1b: Implement frontend against mock data matching the contract
 Slice 2: Integrate and test end-to-end
 ```
 
-### Risk-First Slicing
+### 風險優先切分
 
-Tackle the riskiest or most uncertain piece first:
+先處理風險最高、最不確定的那一塊：
 
 ```
 Slice 1: Prove the WebSocket connection works (highest risk)
@@ -84,19 +84,19 @@ Slice 2: Build real-time task updates on the proven connection
 Slice 3: Add offline support and reconnection
 ```
 
-If Slice 1 fails, you discover it before investing in Slices 2 and 3.
+若切片 1 失敗，你會在投入切片 2 與 3 之前就發現。
 
-## Implementation Rules
+## 實作規則
 
-### Rule 0: Simplicity First
+### 規則 0：簡單優先
 
-Before writing any code, ask: "What is the simplest thing that could work?"
+寫任何程式碼之前先問：「能行得通的最簡單做法是什麼？」
 
-After writing code, review it against these checks:
-- Can this be done in fewer lines?
-- Are these abstractions earning their complexity?
-- Would a staff engineer look at this and say "why didn't you just..."?
-- Am I building for hypothetical future requirements, or the current task?
+寫完之後，用這些檢查回頭審視：
+- 這能用更少的行數做完嗎？
+- 這些抽象值得它們帶來的複雜度嗎？
+- 資深工程師看了會不會說「你怎麼不直接……」？
+- 我是在為假想的未來需求而做，還是為當下的任務而做？
 
 ```
 SIMPLICITY CHECK:
@@ -110,20 +110,20 @@ SIMPLICITY CHECK:
 ✓ Three form components
 ```
 
-Three similar lines of code is better than a premature abstraction. Implement the naive, obviously-correct version first. Optimize only after correctness is proven with tests.
+三行相似的程式碼，勝過一個過早的抽象。先實作那個天真、明顯正確的版本。等正確性被測試證實之後，才做最佳化。
 
-### Rule 0.5: Scope Discipline
+### 規則 0.5：範圍紀律
 
-Touch only what the task requires.
+只碰任務需要你碰的東西。
 
-Do NOT:
-- "Clean up" code adjacent to your change
-- Refactor imports in files you're not modifying
-- Remove comments you don't fully understand
-- Add features not in the spec because they "seem useful"
-- Modernize syntax in files you're only reading
+**不要**：
+- 「順手整理」你這次變更旁邊的程式碼
+- 重整你並沒有要修改的檔案裡的 import
+- 刪掉你並未完全理解的註解
+- 因為「看起來會有用」就加上規格裡沒有的功能
+- 在你只是讀過的檔案裡把語法現代化
 
-If you notice something worth improving outside your task scope, note it — don't fix it:
+如果你注意到任務範圍外有值得改善的地方，把它記下來 —— 不要動手修：
 
 ```
 NOTICED BUT NOT TOUCHING:
@@ -132,21 +132,21 @@ NOTICED BUT NOT TOUCHING:
 → Want me to create tasks for these?
 ```
 
-### Rule 1: One Thing at a Time
+### 規則 1：一次一件事
 
-Each increment changes one logical thing. Don't mix concerns:
+每個增量只改變一件邏輯上的事。不要把不同關注點混在一起：
 
-**Bad:** One commit that adds a new component, refactors an existing one, and updates the build config.
+**不好：** 一個 commit 同時新增了一個元件、重構了另一個既有元件，還改了建置設定。
 
-**Good:** Three separate commits — one for each change.
+**好：** 三個獨立的 commit —— 每項變更一個。
 
-### Rule 2: Keep It Compilable
+### 規則 2：保持可編譯
 
-After each increment, the project must build and existing tests must pass. Don't leave the codebase in a broken state between slices.
+每個增量之後，專案都必須能建置，既有測試都必須通過。不要在切片之間把程式碼庫留在壞掉的狀態。
 
-### Rule 3: Feature Flags for Incomplete Features
+### 規則 3：未完成的功能用功能旗標包起來
 
-If a feature isn't ready for users but you need to merge increments:
+如果某個功能還沒準備好給使用者，但你需要合併增量：
 
 ```typescript
 // Feature flag for work-in-progress
@@ -157,11 +157,11 @@ if (ENABLE_TASK_SHARING) {
 }
 ```
 
-This lets you merge small increments to the main branch without exposing incomplete work.
+這讓你可以把小增量合併進主分支，又不會暴露未完成的工作。
 
-### Rule 4: Safe Defaults
+### 規則 4：安全的預設值
 
-New code should default to safe, conservative behavior:
+新程式碼的預設行為應該是安全、保守的：
 
 ```typescript
 // Safe: disabled by default, opt-in
@@ -171,18 +171,18 @@ export function createTask(data: TaskInput, options?: { notify?: boolean }) {
 }
 ```
 
-### Rule 5: Rollback-Friendly
+### 規則 5：對回滾友善
 
-Each increment should be independently revertable:
+每個增量都應該能被獨立還原：
 
-- Additive changes (new files, new functions) are easy to revert
-- Modifications to existing code should be minimal and focused
-- Database migrations should have corresponding rollback migrations
-- Avoid deleting something in one commit and replacing it in the same commit — separate them
+- 新增性質的變更（新檔案、新函式）很容易還原
+- 對既有程式碼的修改應該最小化並聚焦
+- 資料庫遷移應該有對應的回滾遷移
+- 避免在同一個 commit 裡先刪掉某個東西又替換掉它 —— 把它們分開
 
-## Working with Agents
+## 與 agent 協作
 
-When directing an agent to implement incrementally:
+在指示 agent 做漸進式實作時：
 
 ```
 "Let's implement Task 3 from the plan.
@@ -194,56 +194,56 @@ After implementing, run `npm test` and `npm run build` to verify
 nothing is broken."
 ```
 
-Be explicit about what's in scope and what's NOT in scope for each increment.
+明確講出每個增量的範圍內是什麼、範圍外**不是**什麼。
 
-## Increment Checklist
+## 增量檢核清單
 
-After each increment, verify:
+每個增量之後，驗證：
 
-- [ ] The change does one thing and does it completely
-- [ ] All existing tests still pass (`npm test`)
-- [ ] The build succeeds (`npm run build`)
-- [ ] Type checking passes (`npx tsc --noEmit`)
-- [ ] Linting passes (`npm run lint`)
-- [ ] The new functionality works as expected
-- [ ] The change is committed with a descriptive message
+- [ ] 這項變更只做一件事，而且做完整
+- [ ] 所有既有測試仍然通過（`npm test`）
+- [ ] 建置成功（`npm run build`）
+- [ ] 型別檢查通過（`npx tsc --noEmit`）
+- [ ] Lint 通過（`npm run lint`）
+- [ ] 新功能如預期運作
+- [ ] 變更已用具描述性的訊息 commit
 
-**Note:** Run each verification command after a change that could affect it. After a successful run, don't repeat the same command unless the code has changed since — re-running on unchanged code adds no information.
+**注意：** 在可能影響某項檢查的變更之後，就跑那個驗證指令。成功跑過之後，除非程式碼有變動，否則不要重複跑同一個指令 —— 對沒改動過的程式碼重跑，不會提供任何新資訊。
 
-## Common Rationalizations
+## 常見的自我合理化
 
-| Rationalization | Reality |
+| 自我合理化 | 現實 |
 |---|---|
-| "I'll test it all at the end" | Bugs compound. A bug in Slice 1 makes Slices 2-5 wrong. Test each slice. |
-| "It's faster to do it all at once" | It *feels* faster until something breaks and you can't find which of 500 changed lines caused it. |
-| "These changes are too small to commit separately" | Small commits are free. Large commits hide bugs and make rollbacks painful. |
-| "I'll add the feature flag later" | If the feature isn't complete, it shouldn't be user-visible. Add the flag now. |
-| "This refactor is small enough to include" | Refactors mixed with features make both harder to review and debug. Separate them. |
-| "Let me run the build command again just to be sure" | After a successful run, repeating the same command adds nothing unless the code has changed since. Run it again after subsequent edits, not as reassurance. |
+| 「我最後再一次全部測」 | bug 會疊加。切片 1 的 bug 會讓切片 2-5 全錯。每個切片都測。 |
+| 「一次做完比較快」 | 在出事之前*感覺*比較快；出事之後，你會找不出 500 行改動裡是哪一行造成的。 |
+| 「這些變更太小，不值得分開 commit」 | 小 commit 不花錢。大 commit 會藏 bug，還讓回滾變得痛苦。 |
+| 「功能旗標我之後再加」 | 若功能還沒完成，它就不該對使用者可見。現在就加旗標。 |
+| 「這個重構很小，順便一起放進來吧」 | 重構跟功能混在一起，會讓兩者都更難審查、更難除錯。分開。 |
+| 「讓我再跑一次建置指令確認一下」 | 成功跑過之後，除非程式碼有變動，否則重複同一個指令什麼也不會多告訴你。要在後續編輯之後再跑，而不是為了求心安。 |
 
-## Red Flags
+## 警訊
 
-- More than 100 lines of code written without running tests
-- Multiple unrelated changes in a single increment
-- "Let me just quickly add this too" scope expansion
-- Skipping the test/verify step to move faster
-- Build or tests broken between increments
-- Large uncommitted changes accumulating
-- Building abstractions before the third use case demands it
-- Touching files outside the task scope "while I'm here"
-- Creating new utility files for one-time operations
-- Running the same build/test command twice in a row without any intervening code change
+- 寫超過 100 行程式碼卻沒跑過測試
+- 一個增量裡塞了多項互不相關的變更
+- 「順便快快加上這個」的範圍膨脹
+- 為了求快而跳過測試／驗證步驟
+- 增量之間建置或測試是壞的
+- 大量未 commit 的變更不斷累積
+- 在第三個使用情境真正要求之前就先做抽象
+- 「反正我都在這裡了」而動到任務範圍外的檔案
+- 為一次性的操作新建工具檔案
+- 中間沒有任何程式碼變動，卻連續跑兩次同一個建置／測試指令
 
-## Verification
+## 驗證
 
-After completing all increments for a task:
+一個任務的所有增量都完成之後：
 
-- [ ] Each increment was individually tested and committed
-- [ ] The full test suite passes
-- [ ] The build is clean
-- [ ] The feature works end-to-end as specified
-- [ ] No uncommitted changes remain
+- [ ] 每個增量都各自測試過並 commit
+- [ ] 完整測試套件通過
+- [ ] 建置乾淨
+- [ ] 功能如規格所述能端到端運作
+- [ ] 沒有殘留未 commit 的變更
 
-## See Also
+## 延伸閱讀
 
-Per-increment verification is the local check. Before declaring a task done, apply the project-wide Definition of Done as the final gate, the standing bar every increment clears regardless of the task. See `references/definition-of-done.md`.
+逐增量的驗證是局部檢查。在宣告任務完成之前，把專案層級的「完成的定義」當成最後一道關卡套用一次 —— 那是不論什麼任務、每個增量都得跨過的固定門檻。見 `references/definition-of-done.md`。

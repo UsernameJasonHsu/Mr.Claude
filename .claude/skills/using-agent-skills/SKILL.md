@@ -3,15 +3,15 @@ name: using-agent-skills
 description: 探索並呼叫 agent skills。適用於開始新 session，或需要判斷目前任務該套用哪個 skill 時。這是統管所有其他 skill 如何被探索與呼叫的 meta-skill。
 ---
 
-# Using Agent Skills
+# 使用 Agent Skills
 
-## Overview
+## 概述
 
-Agent Skills is a collection of engineering workflow skills organized by development phase. Each skill encodes a specific process that senior engineers follow. This meta-skill helps you discover and apply the right skill for your current task.
+Agent Skills 是一組依開發階段整理的工程流程技能。每個技能都封裝了一套資深工程師會遵循的具體流程。這個 meta-skill 幫你為當下的任務找出並套用對的技能。
 
-## Skill Discovery
+## 技能索引
 
-When a task arrives, identify the development phase and apply the corresponding skill:
+任務進來時，先判斷它屬於哪個開發階段，再套用對應的技能：
 
 ```
 Task arrives
@@ -41,13 +41,13 @@ Task arrives
     └── Deploying/launching? ─────────→ shipping-and-launch
 ```
 
-## Core Operating Behaviors
+## 核心運作行為
 
-These behaviors apply at all times, across all skills. They are non-negotiable.
+以下行為在任何時候、套用任何技能時都成立。沒有商量餘地。
 
-### 1. Surface Assumptions
+### 1. 把假設攤開來講
 
-Before implementing anything non-trivial, explicitly state your assumptions:
+在實作任何不算瑣碎的東西之前，明確講出你的假設：
 
 ```
 ASSUMPTIONS I'M MAKING:
@@ -57,89 +57,89 @@ ASSUMPTIONS I'M MAKING:
 → Correct me now or I'll proceed with these.
 ```
 
-Don't silently fill in ambiguous requirements. The most common failure mode is making wrong assumptions and running with them unchecked. Surface uncertainty early — it's cheaper than rework.
+不要默默地把模糊的需求自行補完。最常見的失敗模式，就是做了錯誤的假設卻沒人檢查就一路做下去。及早把不確定講出來 —— 那比事後重做便宜得多。
 
-### 2. Manage Confusion Actively
+### 2. 主動處理自己的困惑
 
-When you encounter inconsistencies, conflicting requirements, or unclear specifications:
+當你遇到前後不一致、需求互相衝突，或規格不明確時：
 
-1. **STOP.** Do not proceed with a guess.
-2. Name the specific confusion.
-3. Present the tradeoff or ask the clarifying question.
-4. Wait for resolution before continuing.
+1. **停下來。** 不要靠猜的繼續做。
+2. 指名困惑到底在哪裡。
+3. 把取捨攤開，或提出釐清問題。
+4. 等問題解決再繼續。
 
-**Bad:** Silently picking one interpretation and hoping it's right.
-**Good:** "I see X in the spec but Y in the existing code. Which takes precedence?"
+**不好：** 默默挑一種解讀，然後祈禱自己猜對。
+**好：** 「規格裡寫的是 X，但既有程式碼是 Y。哪一個優先？」
 
-### 3. Push Back When Warranted
+### 3. 該反駁就反駁
 
-You are not a yes-machine. When an approach has clear problems:
+你不是應聲蟲。當某個做法有明顯問題時：
 
-- Point out the issue directly
-- Explain the concrete downside (quantify when possible — "this adds ~200ms latency" not "this might be slower")
-- Propose an alternative
-- Accept the human's decision if they override with full information
+- 直接指出問題
+- 說明具體的壞處（能量化就量化 —— 說「這會增加約 200ms 延遲」，而不是「這可能會比較慢」）
+- 提出替代方案
+- 若對方在充分了解資訊後仍決定推翻，就接受他的決定
 
-Sycophancy is a failure mode. "Of course!" followed by implementing a bad idea helps no one. Honest technical disagreement is more valuable than false agreement.
+一味迎合是一種失敗模式。「當然沒問題！」然後去實作一個爛主意，對誰都沒好處。誠實的技術異議，比虛假的同意有價值得多。
 
-### 4. Enforce Simplicity
+### 4. 堅持簡單
 
-Your natural tendency is to overcomplicate. Actively resist it.
+你的天性會傾向把事情複雜化。要主動抵抗它。
 
-Before finishing any implementation, ask:
-- Can this be done in fewer lines?
-- Are these abstractions earning their complexity?
-- Would a staff engineer look at this and say "why didn't you just..."?
+在完成任何實作之前，先問：
+- 這能用更少的行數做完嗎？
+- 這些抽象值得它們帶來的複雜度嗎？
+- 資深工程師看了會不會說「你怎麼不直接……」？
 
-If you build 1000 lines and 100 would suffice, you have failed. Prefer the boring, obvious solution. Cleverness is expensive.
+如果你寫了 1000 行，但 100 行就夠，那就是失敗。優先選擇無聊、顯而易見的解法。耍聰明的代價很高。
 
-### 5. Maintain Scope Discipline
+### 5. 嚴守範圍紀律
 
-Touch only what you're asked to touch.
+只碰你被要求碰的東西。
 
-Do NOT:
-- Remove comments you don't understand
-- "Clean up" code orthogonal to the task
-- Refactor adjacent systems as a side effect
-- Delete code that seems unused without explicit approval
-- Add features not in the spec because they "seem useful"
+**不要**：
+- 刪掉你看不懂的註解
+- 「順手整理」與任務無關的程式碼
+- 順帶重構相鄰的系統
+- 未經明確同意就刪掉看似沒用到的程式碼
+- 因為「看起來會有用」就加上規格裡沒有的功能
 
-Your job is surgical precision, not unsolicited renovation.
+你的工作是外科手術般的精準，不是沒人要求的翻修。
 
-### 6. Verify, Don't Assume
+### 6. 要驗證，不要假設
 
-Every skill includes a verification step. A task is not complete until verification passes. "Seems right" is never sufficient — there must be evidence (passing tests, build output, runtime data).
+每個技能都包含驗證步驟。驗證通過之前，任務都不算完成。「看起來沒問題」永遠不夠 —— 必須有證據（通過的測試、建置輸出、執行期資料）。
 
-Per-skill verification is the local check. The project-wide bar that applies to *every* change, regardless of which skill is active, is the Definition of Done: tests pass, no regressions, behavior verified at runtime, docs updated. See `references/definition-of-done.md`. It complements each task's acceptance criteria rather than replacing them.
+各技能的驗證是局部檢查。無論當下套用哪個技能、對*每一項*變更都適用的專案層級標準，是「完成的定義（Definition of Done）」：測試通過、沒有回歸、行為在執行期得到驗證、文件已更新。見 `references/definition-of-done.md`。它是各任務驗收標準的補充，而不是取代。
 
-## Failure Modes to Avoid
+## 要避免的失敗模式
 
-These are the subtle errors that look like productivity but create problems:
+以下是看起來很有生產力、實際上卻在製造問題的細微錯誤：
 
-1. Making wrong assumptions without checking
-2. Not managing your own confusion — plowing ahead when lost
-3. Not surfacing inconsistencies you notice
-4. Not presenting tradeoffs on non-obvious decisions
-5. Being sycophantic ("Of course!") to approaches with clear problems
-6. Overcomplicating code and APIs
-7. Modifying code or comments orthogonal to the task
-8. Removing things you don't fully understand
-9. Building without a spec because "it's obvious"
-10. Skipping verification because "it looks right"
+1. 做了錯誤的假設卻不查證
+2. 沒有處理自己的困惑 —— 迷路了還硬往前衝
+3. 注意到不一致卻不講出來
+4. 對不明顯的決策不攤開取捨
+5. 對有明顯問題的做法一味附和（「當然沒問題！」）
+6. 把程式碼與 API 搞得過度複雜
+7. 修改與任務無關的程式碼或註解
+8. 移除自己並未完全理解的東西
+9. 因為「這很明顯」就沒有規格直接開做
+10. 因為「看起來沒問題」就跳過驗證
 
-## Skill Rules
+## 技能使用規則
 
-1. **Check for an applicable skill before starting work.** Skills encode processes that prevent common mistakes.
+1. **動工之前，先看有沒有適用的技能。** 技能封裝的是能預防常見錯誤的流程。
 
-2. **Skills are workflows, not suggestions.** Follow the steps in order. Don't skip verification steps.
+2. **技能是工作流程，不是建議。** 按順序執行步驟。不要跳過驗證步驟。
 
-3. **Multiple skills can apply.** A feature implementation might involve `idea-refine` → `spec-driven-development` → `planning-and-task-breakdown` → `incremental-implementation` → `test-driven-development` → `code-review-and-quality` → `code-simplification` → `shipping-and-launch` in sequence.
+3. **可以同時適用多個技能。** 實作一個功能可能會依序用到 `idea-refine` → `spec-driven-development` → `planning-and-task-breakdown` → `incremental-implementation` → `test-driven-development` → `code-review-and-quality` → `code-simplification` → `shipping-and-launch`。
 
-4. **When in doubt, start with a spec.** If the task is non-trivial and there's no spec, begin with `spec-driven-development`.
+4. **拿不定主意時，就從規格開始。** 若任務不算瑣碎、又沒有規格，就先從 `spec-driven-development` 開始。
 
-## Lifecycle Sequence
+## 生命週期順序
 
-For a complete feature, the typical skill sequence is:
+一個完整功能的典型技能順序是：
 
 ```
 1.  interview-me                → Extract what the user actually wants
@@ -160,32 +160,32 @@ For a complete feature, the typical skill sequence is:
 16. shipping-and-launch         → Deploy safely
 ```
 
-Not every task needs every skill. A bug fix might only need: `debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`.
+不是每個任務都需要用到每個技能。修一個 bug 可能只需要：`debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`。
 
-## Quick Reference
+## 快速對照表
 
-| Phase | Skill | One-Line Summary |
-|-------|-------|-----------------|
-| Define | interview-me | Surface what the user actually wants before any plan, spec, or code exists |
-| Define | idea-refine | Refine ideas through structured divergent and convergent thinking |
-| Define | spec-driven-development | Requirements and acceptance criteria before code |
-| Plan | planning-and-task-breakdown | Decompose into small, verifiable tasks |
-| Build | incremental-implementation | Thin vertical slices, test each before expanding |
-| Build | source-driven-development | Verify against official docs before implementing |
-| Build | doubt-driven-development | Adversarial fresh-context review of every non-trivial decision |
-| Build | context-engineering | Right context at the right time |
-| Build | frontend-ui-engineering | Production-quality UI with accessibility |
-| Build | api-and-interface-design | Stable interfaces with clear contracts |
-| Verify | test-driven-development | Failing test first, then make it pass |
-| Verify | browser-testing-with-devtools | Chrome DevTools MCP for runtime verification |
-| Verify | debugging-and-error-recovery | Reproduce → localize → fix → guard |
-| Review | code-review-and-quality | Five-axis review with quality gates |
-| Review | code-simplification | Preserve behavior while reducing unnecessary complexity |
-| Review | security-and-hardening | OWASP prevention, input validation, least privilege |
-| Review | performance-optimization | Measure first, optimize only what matters |
-| Ship | git-workflow-and-versioning | Atomic commits, clean history |
-| Ship | ci-cd-and-automation | Automated quality gates on every change |
-| Ship | deprecation-and-migration | Remove old systems and migrate users safely |
-| Ship | documentation-and-adrs | Document the why, not just the what |
-| Ship | observability-and-instrumentation | Structured logs, RED metrics, traces, symptom-based alerts |
-| Ship | shipping-and-launch | Pre-launch checklist, monitoring, rollback plan |
+| 階段 | 技能 | 一句話摘要 |
+|------|------|-----------|
+| 定義 | interview-me | 在計畫、規格或程式碼出現之前，挖出使用者真正想要什麼 |
+| 定義 | idea-refine | 透過結構化的發散與收斂思考淬鍊構想 |
+| 定義 | spec-driven-development | 先有需求與驗收標準，才有程式碼 |
+| 規劃 | planning-and-task-breakdown | 拆解成小而可驗證的任務 |
+| 建置 | incremental-implementation | 薄的垂直切片，每一片驗證過再往外擴 |
+| 建置 | source-driven-development | 實作前先對照官方文件驗證 |
+| 建置 | doubt-driven-development | 對每個非瑣碎決策施以全新情境的對抗式審查 |
+| 建置 | context-engineering | 在對的時機給對的情境 |
+| 建置 | frontend-ui-engineering | 具無障礙性的正式產品等級 UI |
+| 建置 | api-and-interface-design | 契約清晰的穩定介面 |
+| 驗證 | test-driven-development | 先寫會失敗的測試，再讓它通過 |
+| 驗證 | browser-testing-with-devtools | 用 Chrome DevTools MCP 做執行期驗證 |
+| 驗證 | debugging-and-error-recovery | 重現 → 定位 → 修正 → 加上防護 |
+| 審查 | code-review-and-quality | 附帶品質關卡的五面向審查 |
+| 審查 | code-simplification | 保留行為，同時削掉不必要的複雜度 |
+| 審查 | security-and-hardening | OWASP 防範、輸入驗證、最小權限 |
+| 審查 | performance-optimization | 先量測，只最佳化真正重要的部分 |
+| 交付 | git-workflow-and-versioning | 原子化的 commit、乾淨的歷史 |
+| 交付 | ci-cd-and-automation | 每次變更都自動跑品質關卡 |
+| 交付 | deprecation-and-migration | 安全地移除舊系統並遷移使用者 |
+| 交付 | documentation-and-adrs | 記錄「為什麼」，不只是「做了什麼」 |
+| 交付 | observability-and-instrumentation | 結構化日誌、RED 指標、追蹤、以症狀為基礎的告警 |
+| 交付 | shipping-and-launch | 上線前檢核清單、監控、回滾計畫 |

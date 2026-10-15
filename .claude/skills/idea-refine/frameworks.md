@@ -1,99 +1,99 @@
-# Ideation Frameworks Reference
+# 發想框架參考
 
-Use these frameworks selectively. Pick the lens that fits the idea — don't mechanically run every framework. The goal is to unlock thinking, not to follow a checklist.
+有選擇地使用這些框架。挑一個適合這個構想的視角 —— 不要機械式地把每個框架都跑一遍。目的是打開思路，不是照表操課。
 
 ## SCAMPER
 
-A structured way to transform an existing idea by applying seven different operations:
+一套結構化的做法，透過七種操作來改造既有構想：
 
-- **Substitute:** What component, material, or process could you swap out? What if you replaced the core technology? The target audience? The business model?
-- **Combine:** What if you merged this with another product, service, or idea? What two things that don't usually go together would create something new?
-- **Adapt:** What else is like this? What ideas from other industries, domains, or time periods could you borrow? What parallel exists in nature?
-- **Modify (Magnify/Minimize):** What if you made it 10x bigger? 10x smaller? What if you exaggerated one feature? What if you stripped it to the absolute minimum?
-- **Put to other uses:** Who else could use this? What other problems could it solve? What happens if you use it in a completely different context?
-- **Eliminate:** What happens if you remove a feature entirely? What's the version with zero configuration? What would it look like with half the steps?
-- **Reverse/Rearrange:** What if you did the steps in the opposite order? What if the user did the work instead of the system (or vice versa)? What if you reversed the value chain?
+- **替換（Substitute）：** 有哪個元件、材料或流程可以換掉？如果換掉核心技術會怎樣？換掉目標客群呢？換掉商業模式呢？
+- **結合（Combine）：** 如果把它跟另一個產品、服務或構想合併會怎樣？哪兩個平常不會湊在一起的東西，合起來會產生新東西？
+- **調整（Adapt）：** 還有什麼跟它類似？有哪些來自其他產業、領域或時代的點子可以借用？大自然中有什麼對應的例子？
+- **修改（放大／縮小）（Modify）：** 如果放大 10 倍會怎樣？縮小 10 倍呢？如果把某一個特色誇張化呢？如果精簡到極致呢？
+- **改作他用（Put to other uses）：** 還有誰能用得上？它還能解決哪些其他問題？把它放到完全不同的情境裡會怎樣？
+- **刪除（Eliminate）：** 如果整個拿掉某個功能會怎樣？零設定的版本長什麼樣？步驟砍一半又會是什麼樣子？
+- **反轉／重排（Reverse/Rearrange）：** 如果把步驟倒過來做會怎樣？如果改由使用者做這些工作、而不是系統來做（或反過來）呢？如果把價值鏈反轉呢？
 
-**Best for:** Improving or reimagining existing products/features. Less useful for greenfield ideas.
+**最適用於：** 改良或重新想像既有的產品／功能。對從零開始的構想比較沒用。
 
-## How Might We (HMW)
+## How Might We（HMW，「我們如何能……」）
 
-Reframe problems as opportunities using the "How Might We..." format:
+用「我們如何能……」的句型，把問題重新框成機會：
 
-- Start with an observation or pain point
-- Reframe it as "How might we [desired outcome] for [specific user] without [key constraint]?"
-- Generate multiple HMW framings of the same problem — different framings unlock different solutions
+- 從一個觀察或痛點出發
+- 重新框成「我們如何能在不犧牲［關鍵限制］的前提下，為［特定使用者］做到［期望結果］？」
+- 針對同一個問題產出多種 HMW 框法 —— 不同的框法會打開不同的解法
 
-**Good HMW qualities:**
-- Narrow enough to be actionable ("...help new users find relevant content in their first 5 minutes")
-- Broad enough to allow creative solutions (not "...add a recommendation sidebar")
-- Contains a tension or constraint that forces creativity
+**好的 HMW 具備：**
+- 夠窄，能夠付諸行動（「……幫新使用者在最初 5 分鐘內找到相關內容」）
+- 夠寬，容得下有創意的解法（而不是「……加一個推薦側邊欄」）
+- 包含某種張力或限制，逼出創意
 
-**Bad HMW qualities:**
-- Too broad: "How might we make users happy?"
-- Too narrow: "How might we add a button to the settings page?"
-- Solution-embedded: "How might we build a chatbot for support?"
+**不好的 HMW：**
+- 太寬：「我們如何能讓使用者開心？」
+- 太窄：「我們如何能在設定頁加一個按鈕？」
+- 已內嵌解法：「我們如何能做一個客服聊天機器人？」
 
-**Best for:** Reframing stuck thinking. When someone is anchored on a solution, pull them back to the problem.
+**最適用於：** 重新框定卡住的思路。當有人一直錨定在某個解法上時，把他們拉回問題本身。
 
-## First Principles Thinking
+## 第一性原理思考
 
-Break the idea down to its fundamental truths, then rebuild from there:
+把構想拆解到最根本的事實，再從那裡重新建構：
 
-1. **What do we know is true?** (not assumed, not conventional — actually true)
-2. **What are we assuming?** List every assumption, even the ones that feel obvious
-3. **Which assumptions can we challenge?** For each, ask: "Is this actually a law of physics, or just how it's been done?"
-4. **Rebuild from the truths.** If you only had the fundamental truths, what would you build?
+1. **我們知道哪些事是真的？**（不是假設，也不是慣例 —— 是真的成立）
+2. **我們正在假設什麼？** 列出每一項假設，連那些看起來理所當然的也要列
+3. **哪些假設可以挑戰？** 逐一問：「這到底是物理定律，還是只是大家一直以來的做法？」
+4. **從事實重新建構。** 如果你手上只有那些根本事實，你會做出什麼？
 
-**Best for:** Breaking out of incremental thinking. When every idea feels like a small improvement on the status quo.
+**最適用於：** 跳脫漸進式思維。當每個想法都只像是在現狀上做小改良時。
 
-## Jobs to Be Done (JTBD)
+## Jobs to Be Done（JTBD，待完成的工作）
 
-Focus on what the user is trying to accomplish, not what they say they want:
+聚焦於使用者想達成什麼，而不是他們嘴上說想要什麼：
 
-- **Functional job:** What task are they trying to complete?
-- **Emotional job:** How do they want to feel?
-- **Social job:** How do they want to be perceived?
+- **功能性工作：** 他們想完成什麼任務？
+- **情緒性工作：** 他們希望有什麼感覺？
+- **社會性工作：** 他們希望被別人怎麼看待？
 
-Format: "When I [situation], I want to [motivation], so I can [expected outcome]."
+句型：「當我處於［情境］時，我想要［動機］，這樣我就能［預期結果］。」
 
-**Key insight:** People don't buy products — they hire them to do a job. The competing product isn't always in the same category. (Netflix competes with sleep, not just other streaming services.)
+**關鍵洞察：** 人們不是買產品 —— 而是「雇用」產品來完成某項工作。競爭對手不一定在同一個類別裡。（Netflix 的競爭對手是睡眠，不只是其他串流服務。）
 
-**Best for:** Understanding the real problem. When you're not sure if you're solving the right thing.
+**最適用於：** 理解真正的問題。當你不確定自己解的是不是對的問題時。
 
-## Constraint-Based Ideation
+## 限制導向發想
 
-Deliberately impose constraints to force creative solutions:
+刻意加上限制，逼出有創意的解法：
 
-- **Time constraint:** "What if you only had 1 day to build this?"
-- **Feature constraint:** "What if it could only have one feature?"
-- **Tech constraint:** "What if you couldn't use [the obvious technology]?"
-- **Cost constraint:** "What if it had to be free forever?"
-- **Audience constraint:** "What if your user had never used a computer before?"
-- **Scale constraint:** "What if it needed to work for 1 billion users? What about just 10?"
+- **時間限制：** 「如果你只有 1 天可以做出來呢？」
+- **功能限制：** 「如果它只能有一個功能呢？」
+- **技術限制：** 「如果不能用［那個顯而易見的技術］呢？」
+- **成本限制：** 「如果它必須永遠免費呢？」
+- **客群限制：** 「如果你的使用者從來沒用過電腦呢？」
+- **規模限制：** 「如果它要能服務 10 億人呢？如果只服務 10 個人呢？」
 
-**Best for:** Cutting through complexity. When the idea is growing too large or too vague.
+**最適用於：** 削掉複雜度。當構想越長越大或越來越模糊時。
 
-## Pre-mortem
+## 事前驗屍（Pre-mortem）
 
-Imagine the idea has already failed. Work backwards:
+想像這個構想已經失敗了，再往回推：
 
-1. It's 12 months from now. The project shipped and flopped. What went wrong?
-2. List every plausible reason for failure — technical, market, team, timing
-3. For each failure mode: Is this preventable? Is this a signal the idea needs to change?
-4. Which failure modes are you willing to accept? Which ones would kill the project?
+1. 現在是 12 個月後。專案上線了，但慘敗。哪裡出了問題？
+2. 列出每一個說得通的失敗原因 —— 技術面、市場面、團隊面、時機面
+3. 針對每種失敗模式：這可以預防嗎？這是不是在暗示構想需要調整？
+4. 哪些失敗模式你願意承受？哪些會直接讓專案陣亡？
 
-**Best for:** Phase 2 evaluation. Stress-testing ideas that feel good but haven't been pressure-tested.
+**最適用於：** 第二階段的評估。壓力測試那些感覺不錯、但還沒被檢驗過的構想。
 
-## Analogous Inspiration
+## 類比啟發
 
-Look at how other domains solved similar problems:
+看看其他領域是怎麼解決類似問題的：
 
-- What industry has already solved a version of this problem?
-- What would this look like if [specific company/product] built it?
-- What natural system works this way?
-- What historical precedent exists?
+- 有哪個產業已經解決過這個問題的某個版本？
+- 如果由［某家公司／某個產品］來做，它會長什麼樣？
+- 哪個自然界的系統是這樣運作的？
+- 歷史上有什麼前例？
 
-The key is finding *structural* similarities, not surface-level ones. "Uber for X" is surface-level. "A two-sided marketplace that solves a trust problem between strangers" is structural.
+關鍵是找出*結構上*的相似，而不是表面上的相似。「X 界的 Uber」是表面的。「一個解決陌生人之間信任問題的雙邊市集」才是結構性的。
 
-**Best for:** Phase 1 expansion. Generating variations that feel genuinely different from the obvious approach.
+**最適用於：** 第一階段的擴散。產出真正有別於顯而易見做法的變化版本。

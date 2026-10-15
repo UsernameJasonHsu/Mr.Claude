@@ -3,80 +3,80 @@ name: shipping-and-launch
 description: 準備正式環境上線發布。適用於準備部署至正式環境時。適用於需要上線前檢核清單、設定監控、規劃分階段推出（staged rollout），或需要回滾（rollback）策略時。
 ---
 
-# Shipping and Launch
+# 交付與上線
 
-## Overview
+## 概述
 
-Ship with confidence. The goal is not just to deploy — it's to deploy safely, with monitoring in place, a rollback plan ready, and a clear understanding of what success looks like. Every launch should be reversible, observable, and incremental.
+有把握地交付。目標不只是「部署出去」—— 而是安全地部署：監控就位、回滾計畫備妥，並且清楚知道成功長什麼樣。每一次上線都應該是可逆、可觀測、漸進的。
 
-## When to Use
+## 適用時機
 
-- Deploying a feature to production for the first time
-- Releasing a significant change to users
-- Migrating data or infrastructure
-- Opening a beta or early access program
-- Any deployment that carries risk (all of them)
+- 第一次把某個功能部署到正式環境
+- 對使用者發布重大變更
+- 遷移資料或基礎設施
+- 開放 beta 或搶先體驗計畫
+- 任何帶有風險的部署（也就是全部）
 
-## The Pre-Launch Checklist
+## 上線前檢核清單
 
-### Code Quality
+### 程式碼品質
 
-- [ ] All tests pass (unit, integration, e2e)
-- [ ] Build succeeds with no warnings
-- [ ] Lint and type checking pass
-- [ ] Code reviewed and approved
-- [ ] No TODO comments that should be resolved before launch
-- [ ] No `console.log` debugging statements in production code
-- [ ] Error handling covers expected failure modes
+- [ ] 所有測試通過（單元、整合、e2e）
+- [ ] 建置成功且沒有警告
+- [ ] Lint 與型別檢查通過
+- [ ] 程式碼已審查並核准
+- [ ] 沒有應該在上線前解決掉的 TODO 註解
+- [ ] 正式環境程式碼中沒有除錯用的 `console.log`
+- [ ] 錯誤處理涵蓋了預期中的失敗模式
 
-### Security
+### 安全性
 
-- [ ] No secrets in code or version control
-- [ ] `npm audit` shows no critical or high vulnerabilities
-- [ ] Input validation on all user-facing endpoints
-- [ ] Authentication and authorization checks in place
-- [ ] Security headers configured (CSP, HSTS, etc.)
-- [ ] Rate limiting on authentication endpoints
-- [ ] CORS configured to specific origins (not wildcard)
+- [ ] 程式碼或版控中沒有機密資料
+- [ ] `npm audit` 沒有嚴重或高風險漏洞
+- [ ] 所有面向使用者的端點都有輸入驗證
+- [ ] 身分驗證與授權檢查已就位
+- [ ] 安全性標頭已設定（CSP、HSTS 等）
+- [ ] 身分驗證端點有流量限制
+- [ ] CORS 限制在特定來源（不是萬用字元）
 
-### Performance
+### 效能
 
-- [ ] Core Web Vitals within "Good" thresholds
-- [ ] No N+1 queries in critical paths
-- [ ] Images optimized (compression, responsive sizes, lazy loading)
-- [ ] Bundle size within budget
-- [ ] Database queries have appropriate indexes
-- [ ] Caching configured for static assets and repeated queries
+- [ ] Core Web Vitals 落在「Good」門檻內
+- [ ] 關鍵路徑上沒有 N+1 查詢
+- [ ] 圖片已最佳化（壓縮、響應式尺寸、延遲載入）
+- [ ] Bundle 大小在預算內
+- [ ] 資料庫查詢有適當的索引
+- [ ] 靜態資源與重複查詢已設定快取
 
-### Accessibility
+### 無障礙性
 
-- [ ] Keyboard navigation works for all interactive elements
-- [ ] Screen reader can convey page content and structure
-- [ ] Color contrast meets WCAG 2.1 AA (4.5:1 for text)
-- [ ] Focus management correct for modals and dynamic content
-- [ ] Error messages are descriptive and associated with form fields
-- [ ] No accessibility warnings in axe-core or Lighthouse
+- [ ] 所有可互動元素都能用鍵盤操作
+- [ ] 螢幕閱讀器能傳達頁面內容與結構
+- [ ] 色彩對比符合 WCAG 2.1 AA（文字 4.5:1）
+- [ ] 對話框與動態內容的焦點管理正確
+- [ ] 錯誤訊息具描述性，且與表單欄位有關聯
+- [ ] axe-core 或 Lighthouse 沒有無障礙性警告
 
-### Infrastructure
+### 基礎設施
 
-- [ ] Environment variables set in production
-- [ ] Database migrations applied (or ready to apply)
-- [ ] DNS and SSL configured
-- [ ] CDN configured for static assets
-- [ ] Logging and error reporting configured
-- [ ] Health check endpoint exists and responds
+- [ ] 正式環境的環境變數已設定
+- [ ] 資料庫遷移已套用（或已準備好套用）
+- [ ] DNS 與 SSL 已設定
+- [ ] 靜態資源的 CDN 已設定
+- [ ] 日誌與錯誤回報已設定
+- [ ] 健康檢查端點存在且會回應
 
-### Documentation
+### 文件
 
-- [ ] README updated with any new setup requirements
-- [ ] API documentation current
-- [ ] ADRs written for any architectural decisions
-- [ ] Changelog updated
-- [ ] User-facing documentation updated (if applicable)
+- [ ] README 已更新，包含任何新的設定需求
+- [ ] API 文件是最新的
+- [ ] 所有架構決策都已寫成 ADR
+- [ ] 變更紀錄已更新
+- [ ] 面向使用者的文件已更新（若適用）
 
-## Feature Flag Strategy
+## 功能旗標策略
 
-Ship behind feature flags to decouple deployment from release:
+把功能藏在旗標後面交付，讓「部署」與「發布」脫鉤：
 
 ```typescript
 // Feature flag check
@@ -91,7 +91,7 @@ if (flags.taskSharing) {
 return null;
 ```
 
-**Feature flag lifecycle:**
+**功能旗標的生命週期：**
 
 ```
 1. DEPLOY with flag OFF     → Code is in production but inactive
@@ -101,15 +101,15 @@ return null;
 5. CLEAN UP                 → Remove flag and dead code path after full rollout
 ```
 
-**Rules:**
-- Every feature flag has an owner and an expiration date
-- Clean up flags within 2 weeks of full rollout
-- Don't nest feature flags (creates exponential combinations)
-- Test both flag states (on and off) in CI
+**規則：**
+- 每個功能旗標都要有負責人與到期日
+- 全面推出後 2 週內清掉旗標
+- 不要巢狀使用功能旗標（會產生指數級的組合）
+- 在 CI 中要測試旗標的兩種狀態（開與關）
 
-## Staged Rollout
+## 分階段推出
 
-### The Rollout Sequence
+### 推出順序
 
 ```
 1. DEPLOY to staging
@@ -139,29 +139,29 @@ return null;
    └── Clean up feature flag
 ```
 
-### Rollout Decision Thresholds
+### 推出的決策門檻
 
-Use these thresholds to decide whether to advance, hold, or roll back at each stage:
+用這些門檻決定每個階段要推進、暫停，還是回滾：
 
-| Metric | Advance (green) | Hold and investigate (yellow) | Roll back (red) |
-|--------|-----------------|-------------------------------|-----------------|
-| Error rate | Within 10% of baseline | 10-100% above baseline | >2x baseline |
-| P95 latency | Within 20% of baseline | 20-50% above baseline | >50% above baseline |
-| Client JS errors | No new error types | New errors at <0.1% of sessions | New errors at >0.1% of sessions |
-| Business metrics | Neutral or positive | Decline <5% (may be noise) | Decline >5% |
+| 指標 | 推進（綠燈） | 暫停調查（黃燈） | 回滾（紅燈） |
+|------|-------------|-----------------|-------------|
+| 錯誤率 | 在基準線 10% 以內 | 高於基準線 10-100% | 超過基準線 2 倍 |
+| P95 延遲 | 在基準線 20% 以內 | 高於基準線 20-50% | 高於基準線 50% 以上 |
+| 用戶端 JS 錯誤 | 沒有新的錯誤類型 | 新錯誤出現在 <0.1% 的 session | 新錯誤出現在 >0.1% 的 session |
+| 業務指標 | 持平或正向 | 下降 <5%（可能是雜訊） | 下降 >5% |
 
-### When to Roll Back
+### 什麼時候該回滾
 
-Roll back immediately if:
-- Error rate increases by more than 2x baseline
-- P95 latency increases by more than 50%
-- User-reported issues spike
-- Data integrity issues detected
-- Security vulnerability discovered
+出現以下情況立刻回滾：
+- 錯誤率超過基準線 2 倍以上
+- P95 延遲增加超過 50%
+- 使用者回報的問題暴增
+- 偵測到資料完整性問題
+- 發現安全漏洞
 
-## Monitoring and Observability
+## 監控與可觀測性
 
-### What to Monitor
+### 該監控什麼
 
 ```
 Application metrics:
@@ -185,7 +185,7 @@ Client metrics:
 └── Page load time
 ```
 
-### Error Reporting
+### 錯誤回報
 
 ```typescript
 // Set up error boundary with reporting
@@ -222,9 +222,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 ```
 
-### Post-Launch Verification
+### 上線後驗證
 
-In the first hour after launch:
+上線後的第一個小時內：
 
 ```
 1. Check health endpoint returns 200
@@ -235,9 +235,9 @@ In the first hour after launch:
 6. Confirm rollback mechanism works (dry run if possible)
 ```
 
-## Rollback Strategy
+## 回滾策略
 
-Every deployment needs a rollback plan before it happens:
+每次部署在發生之前，都要有回滾計畫：
 
 ```markdown
 ## Rollback Plan for [Feature/Release]
@@ -263,48 +263,48 @@ Every deployment needs a rollback plan before it happens:
 - Redeploy previous version: < 5 minutes
 - Database rollback: < 15 minutes
 ```
-## See Also
+## 延伸閱讀
 
-- For the project-wide Definition of Done that every change must clear before this checklist, see `references/definition-of-done.md`
-- For security pre-launch checks, see `references/security-checklist.md`
-- For performance pre-launch checklist, see `references/performance-checklist.md`
-- For accessibility verification before launch, see `references/accessibility-checklist.md`
+- 每項變更在跑這份檢核清單之前都必須先跨過的專案層級「完成的定義」，見 `references/definition-of-done.md`
+- 上線前的安全性檢查，見 `references/security-checklist.md`
+- 上線前的效能檢核清單，見 `references/performance-checklist.md`
+- 上線前的無障礙性驗證，見 `references/accessibility-checklist.md`
 
-## Common Rationalizations
+## 常見的自我合理化
 
-| Rationalization | Reality |
+| 自我合理化 | 現實 |
 |---|---|
-| "It works in staging, it'll work in production" | Production has different data, traffic patterns, and edge cases. Monitor after deploy. |
-| "We don't need feature flags for this" | Every feature benefits from a kill switch. Even "simple" changes can break things. |
-| "Monitoring is overhead" | Not having monitoring means you discover problems from user complaints instead of dashboards. |
-| "We'll add monitoring later" | Add it before launch. You can't debug what you can't see. |
-| "Rolling back is admitting failure" | Rolling back is responsible engineering. Shipping a broken feature is the failure. |
+| 「測試環境可以，正式環境就會可以」 | 正式環境有不同的資料、流量型態與邊界情境。部署後要監控。 |
+| 「這個不需要功能旗標」 | 每個功能都受益於一個緊急關閉開關。就算是「簡單的」變更也可能弄壞東西。 |
+| 「監控是額外開銷」 | 沒有監控，代表你是從使用者抱怨、而不是從儀表板得知問題。 |
+| 「監控之後再加」 | 上線前就要加。看不見的東西，你無法除錯。 |
+| 「回滾就是承認失敗」 | 回滾是負責任的工程作為。把壞掉的功能推上線才是失敗。 |
 
-## Red Flags
+## 警訊
 
-- Deploying without a rollback plan
-- No monitoring or error reporting in production
-- Big-bang releases (everything at once, no staging)
-- Feature flags with no expiration or owner
-- No one monitoring the deploy for the first hour
-- Production environment configuration done by memory, not code
-- "It's Friday afternoon, let's ship it"
+- 沒有回滾計畫就部署
+- 正式環境沒有監控或錯誤回報
+- 大爆炸式發布（全部一次上，沒有分階段）
+- 功能旗標沒有到期日也沒有負責人
+- 上線後第一個小時沒有人在盯
+- 正式環境的設定是憑記憶做的，而不是寫成程式碼
+- 「週五下午了，就上吧」
 
-## Verification
+## 驗證
 
-Before deploying:
+部署之前：
 
-- [ ] Pre-launch checklist completed (all sections green)
-- [ ] Feature flag configured (if applicable)
-- [ ] Rollback plan documented
-- [ ] Monitoring dashboards set up
-- [ ] Team notified of deployment
+- [ ] 上線前檢核清單已完成（所有區塊都綠燈）
+- [ ] 功能旗標已設定（若適用）
+- [ ] 回滾計畫已寫成文件
+- [ ] 監控儀表板已建好
+- [ ] 已通知團隊本次部署
 
-After deploying:
+部署之後：
 
-- [ ] Health check returns 200
-- [ ] Error rate is normal
-- [ ] Latency is normal
-- [ ] Critical user flow works
-- [ ] Logs are flowing
-- [ ] Rollback tested or verified ready
+- [ ] 健康檢查回傳 200
+- [ ] 錯誤率正常
+- [ ] 延遲正常
+- [ ] 關鍵使用者流程可運作
+- [ ] 日誌有在流動
+- [ ] 回滾機制已測試或確認就緒
